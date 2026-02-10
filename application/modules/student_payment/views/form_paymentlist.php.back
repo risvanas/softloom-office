@@ -1,0 +1,51 @@
+<?php
+$con=mysql_connect('localhost','root','');
+mysql_select_db('softloom_account',$con);
+?>
+<table class="table table-striped table-bordered table-hover table-full-width" id="sample_1">
+       <thead>
+          <tr>
+            <th class="">No</th>
+          	<th class="">Student Name</th>
+            <th class="">Contact Number</th>
+            <th class="">Course Fee</th>
+            <th class="">Paid Amount</th>
+            <th class="">Balance Amount</th>
+          </tr>
+        </thead>
+                    <?php $n=1;
+foreach($cond->result() as $row)
+{	
+     $id=$row->STUDENT_ID;
+	$STUD_NAME = $row->NAME;
+	$CONTACT_NUMBER = $row->CONTACT_NO;
+	$COURSE_FEE=$row->FEE_AMOUNT;
+	
+	$sel="select sum(AMOUNT) as amt from tbl_payment where STUDENT_ID='$id'";
+	$sql=mysql_query($sel);
+	$res=mysql_fetch_array($sql);
+	$PAID_AMOUNT= $res['amt'];
+	$bl_amt=$COURSE_FEE-$PAID_AMOUNT;
+?>
+     <tr>
+     <td><?php echo $n; ?> </td>
+     
+	<td><?php echo $STUD_NAME; ?> </td>
+	<td><?php echo $CONTACT_NUMBER; ?> </td>
+	<td><?php echo $COURSE_FEE; ?> </td>
+	<td><?php  echo $PAID_AMOUNT; ?> </td>
+    <td> <?php echo $bl_amt; ?>
+</tr>										
+<?Php
+$n++;
+}
+?>
+</table>
+<script>
+	
+jQuery(document).ready(function() {
+	Main.init();
+	FormElements.init();
+	
+});
+		</script>

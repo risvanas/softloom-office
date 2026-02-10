@@ -1,0 +1,76 @@
+<div class="row" style="padding-top:20px;">
+    <div class="col-md-12"> 
+        <!-- start: DYNAMIC TABLE PANEL -->
+        <div class="panel panel-default">
+            <div class="panel-heading"> <i class="icon-external-link-sign"></i>&nbsp Lock Date
+                <div class="panel-tools"> <a class="btn btn-xs btn-link panel-collapse collapses" href="#"></a><a class="btn btn-xs btn-link panel-config"
+                                                                                                                  href="#panel-config" data-toggle="modal"><i class="icon-wrench"></i></a><a class="btn btn-xs btn-link panel-refresh"
+                                                                                               href="#"><i class="icon-refresh"></i></a><a class="btn btn-xs btn-link panel-expand"
+                                                                href="#"><i class="icon-resize-full"></i></a><a class="btn btn-xs btn-link panel-close"
+                                                                    href="#"><i class="icon-remove"></i></a> </div>
+            </div>
+            <form  method="post" name="form" action="<?php echo site_url('lockdate/date_register'); ?>" id="form">
+                <div class="panel-body">
+                    <div class="successHandler alert alert-danger "> 
+                        <i class="icon-remove"></i> <?php echo "Error"; ?>   
+                    </div>
+
+
+                    <h3><i class="icon-edit-sign teal"></i> Lock Date</h3>
+                    <div>
+                        <hr />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">               
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label"> Lock Date1 <span class="symbol required"> </span> </label>
+                                        <span class="input-icon input-icon-right">
+                                            <input autocomplete="off" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" id="txt_lockdate" name="txt_lockdate"/>
+                                            <i class="icon-calendar"></i> </span> </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div> <span class="symbol required"></span>Required Fields
+                                        <hr />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <p> </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-dark-beige btn-block" type="submit"> Register <i class="icon-circle-arrow-right"></i> </button>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                    <!-- end: DYNAMIC TABLE PANEL --> 
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY --> 
+</div>
+
+
+
+
+<script>
+    jQuery(document).ready(function () {
+        Main.init();
+        FormElements.init();
+
+    });
+</script>

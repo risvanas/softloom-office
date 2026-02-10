@@ -1,0 +1,322 @@
+<div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Date <span class="symbol required"> </span> </label>
+                    <input type="text" class="form-control" id="txt_date" name="txt_date" value="<?php echo date('Y-m-d'); ?>" readonly/>
+                  </div>
+                </div>
+				</div>
+				<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Login Information</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Email <span class="symbol required"> </span> </label>
+                    <input type="text" class="form-control" id="txt_email" name="txt_email" value=""/>
+                  </div>
+                </div>
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Password<span class="symbol required"> </span></label>
+                    <input type="text" class="form-control" id="txt_pass" name="txt_pass" value=""/>
+                  </div>
+                </div>
+				</div>
+		<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Personal Information</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Fullname<span class="symbol required"> </span> </label>
+					<input type="text" class="form-control" id="txt_full_name" name="txt_full_name"/>
+                     </div>
+                </div>
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Gender<span class="symbol required"> </span> </label>
+					<select class="form-control" id="txt_gender" name="txt_gender">
+					<option value="">Select</option>
+					<option value="Male">Male</option>
+					<option value="Female">Female</option>
+                    </select>
+                     </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Race <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_race" name="txt_race">
+					<option value="">Select</option>
+					<?php
+					foreach($race->result() as $val)
+					{ ?>
+						<option value="<?php echo $val->R_NAME; ?>"><?php echo $val->R_NAME; ?></option>
+					<?php } ?>
+                    </select>
+                  </div>
+                </div>
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Mobile No <span class="symbol required"> </span> </label>
+                    <input type="text" class="form-control" id="txt_mobile" name="txt_mobile"/>
+                  </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Which Telco? <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_telecom" name="txt_telecom">
+					<option value="">Select</option>
+					<?php
+					foreach($telecom->result() as $val)
+					{ ?>
+						<option value="<?php echo $val->TEL_NAME; ?>"><?php echo $val->TEL_NAME; ?></option>
+					<?php } ?>
+                    </select>
+                  </div>
+                </div>
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Year of Birth <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_byear" name="txt_byear">
+					<option value="">Select</option>
+					<?php
+					$year_no=date('Y')-19;
+					for($i=1950;$i<$year_no;$i++)
+					{ ?>
+						<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+					<?php } ?>
+                    </select>
+                  </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Your Current Location <span class="symbol required"> </span> </label>
+                    <input type="text" class="form-control" id="txt_clocation" name="txt_clocation"/>
+                  </div>
+                </div>
+				</div>
+	<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Qualification & Teaching Experience</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Highest Qualification <span class="symbol required"> </span> </label>
+                    <input type="text" class="form-control" id="txt_hqualification" name="txt_hqualification"/>
+                  </div>
+                </div>
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Teaching Experience <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_teach_exp" name="txt_teach_exp">
+					<option value="">Select</option>
+					<option value="0-1">Less than 1 year</option>
+					<?php
+					$exp=range(1,30);
+					foreach($exp as $val)
+					{ ?>
+						<option value="<?php echo $val; ?>">More than <?php echo $val; ?> year</option>
+					<?php } ?>
+                    </select>
+                  </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Are you a teacher? <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_areyou" name="txt_areyou">
+					<option value="">Select</option>
+					<?php
+					foreach($areyou->result() as $val)
+					{ ?>
+						<option value="<?php echo $val->AR_NAME; ?>"><?php echo $val->AR_NAME; ?></option>
+					<?php } ?>
+                    </select>
+                  </div>
+                </div>
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Full Time/Part-Time? <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_part_time" name="txt_part_time">
+					<option value="">Select</option>
+					<option value="Part-Time Tutor">Part-Time Tutor</option>
+					<option value="Full Time Tutor">Full Time Tutor</option>
+                    </select>
+                  </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Availablity Status <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_avail_status" name="txt_avail_status">
+					<option value="">Select</option>
+					<option value="Available at the moment">Available at the moment</option>
+					<option value="Not Available at the moment">Not Available at the moment</option>
+                    </select>
+                  </div>
+                </div>
+				</div>
+	<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Tuition Subject (Choose only the subject that you can teach)</div>
+				<?php
+				$count=0;
+				foreach($standard->result() as $val)
+				{  
+				$count++;
+				?>
+				<div class="row">
+				<div class="col-md-12">
+                  <p><b>
+										<mark><?php echo $val->STD_NAME; ?></mark>
+									</b></p>
+						<?php
+						$std=$val->STD_ID;
+						$sql="select * from tbl_subject where STANDARD=$std and DEL_FLAG=1";
+						$query=$this->db->query($sql);
+						foreach($query->result() as $row)
+						{ ?>
+									<label class="checkbox-inline">
+									<input type="hidden" id="std<?php echo $count; ?>" name="std<?php echo $count; ?>" value="<?php echo $val->STD_ID; ?>">
+										<input type="checkbox" value="<?php echo $row->SUB_NAME; ?>" class="grey" id="sub<?php echo $count; ?>" name="sub<?php echo $count; ?>[]">
+										<?php echo $row->SUB_NAME; ?>
+									</label>
+						<?php } ?>
+                </div>
+				</div>
+				<?php } ?>
+				<input type="hidden" id="std_no" name="std_no" value="<?php echo $count; ?>">
+	<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Available Tuition Time & Day</div>
+				<?php
+				$count=0;
+				foreach($day->result() as $val)
+				{  
+				$count++;
+				?>
+				<div class="row">
+				<div class="col-md-12">
+                  <p><b>
+										<mark><?php echo $val->DAY_NAME; ?></mark>
+									</b></p>
+						<?php
+						$dayid=$val->DAY_ID;
+						$sql1="select * from tbl_time where DAY_ID=$dayid and DEL_FLAG=1";
+						$query1=$this->db->query($sql1);
+						foreach($query1->result() as $row1)
+						{ ?>
+									<label class="checkbox-inline">
+									<input type="hidden" id="day<?php echo $count; ?>" name="day<?php echo $count; ?>" value="<?php echo $dayid; ?>">
+										<input type="checkbox" value="<?php echo $row1->TIME; ?>" class="grey" name="av_time<?php echo $count; ?>[]" id="av_time<?php echo $count; ?>">
+										<?php echo $row1->TIME; ?>
+									</label>
+				<?php } ?>
+				</div>
+				</div>
+				<?php } ?>
+				<input type="hidden" id="day_no" name="day_no" value="<?php echo $count; ?>">
+		<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Which area you can go for tuition? (Choose only the area that you can go)</div>
+				<?php
+				$count=0;
+				foreach($area->result() as $val)
+				{  
+				$count++;
+				?>
+				<div class="row">
+				<div class="col-md-12">
+                  <p><b>
+										<mark><?php echo $val->AREA_NAME; ?></mark>
+									</b></p>
+						<?php
+						$areaid=$val->AREA_ID;
+						$sql2="select * from tbl_location where AREA_ID=$areaid and DEL_FLAG=1";
+						$query2=$this->db->query($sql2);
+						if($val->AREA_NAME !='Other State')
+						{
+						foreach($query2->result() as $row2)
+						{ ?>
+									<label class="checkbox-inline">
+									<input type="hidden" id="area<?php echo $count; ?>" name="area<?php echo $count; ?>" value="<?php echo $areaid; ?>">
+										<input type="checkbox" value="<?php echo $row2->LOC_NAME; ?>" class="grey" id="area_ch<?php echo $count; ?>" name="area_ch<?php echo $count; ?>[]">
+										<?php echo $row2->LOC_NAME; ?>
+									</label>
+						<?php } }
+						else
+						{	
+						?>
+						<div class="row">
+						<div class="col-md-3">
+						<input type="hidden" id="area<?php echo $count; ?>" name="area<?php echo $count; ?>" value="<?php echo $areaid; ?>">
+						<select class="form-control" id="area_ch<?php echo $count; ?>" name="area_ch<?php echo $count; ?>">
+						<option value="">Select</option>
+						<?php
+						foreach($query2->result() as $row2)
+						{ ?>
+					<option value="<?php echo $row2->LOC_NAME; ?>"><?php echo $row2->LOC_NAME; ?></option>
+						<?php } ?>
+                    </select>
+					</div></div>
+						<?php
+						} ?>
+                </div>
+				</div>
+				<?php } ?>
+				<input type="hidden" id="area_no" name="area_no" value="<?php echo $count; ?>">
+				<br/>
+	<div class="event-category label-default" data-class="label-default">
+												<i class="icon-move"></i>Other Information</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Heading  <span class="symbol required"> </span> </label>
+                    <input type="text" class="form-control" id="txt_heading" name="txt_heading"/>
+                  </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">Tutor Description<span class="symbol required"> </span> </label>
+                    <textarea placeholder="Tutor Description" id="description" name="description" class="form-control"></textarea>
+                  </div>
+                </div>
+				</div>
+				<div class="row">
+				<div class="col-md-6">
+                  <div class="form-group">
+                    <label class="control-label">How do you know about us? <span class="symbol required"> </span> </label>
+                    <select class="form-control" id="txt_how" name="txt_how">
+					<option value="">select</option>
+					<?php
+					foreach($how->result() as $val)
+					{  ?>
+					<option value="<?php echo $val->H_NAME; ?>"><?php echo $val->H_NAME; ?></option>
+					<?php } ?>
+                    </select>
+                  </div>
+                </div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			
