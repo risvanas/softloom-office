@@ -1002,6 +1002,73 @@ class Invoice extends MX_Controller {
         }
     }
 
+
+    function payment_report() {
+        $menu_id = 80;
+        $this->load->library('../controllers/permition_checker');
+        // $this->permition_checker->permition_viewprocess($menu_id);
+        $data['company'] = $this->invoice_model->select_company();
+        $layout = array('page' => 'form_payment_report', 'title' => 'Payment Report', 'data' => $data);
+        render_template($layout);
+    }
+
+    function get_payment_report_list() {
+        $dat_from = $this->input->post('frm');
+        if ($dat_from != '') {
+            $dat_from = date("Y-m-d", strtotime($dat_from));
+        } else {
+            $dat_from = date("Y-m-1");
+        }
+
+        $dat_to = $this->input->post('to');
+        if ($dat_to != '') {
+            $dat_to = date("Y-m-d", strtotime($dat_to));
+        } else {
+            $dat_to = date("Y-m-d");
+        }
+        $key_words = $this->input->post('key_words');
+        $invoice_type = $this->input->post('invoice_type');
+        $generate_pdf = $this->input->post('generate_pdf');
+        $data['company'] = $this->invoice_model->select_company(1); //sis company id is 1
+        $data['frm'] = $this->input->post('frm');
+        $data['to'] = $this->input->post('to');
+        $data['serch'] = $this->invoice_model->get_payment_report_list($dat_from, $dat_to, $key_words, $invoice_type);
+        if ($generate_pdf == 'generate_pdf') {
+
+            $this->load->library('pdfgenerator');
+            $html = $this->load->view('payment_report_pdf', $data, true);
+            $filename = 'payment_report_' . time();
+            $this->pdfgenerator->generate($html, $filename, true, 'A4', 'landscape');
+        } else if ($generate_pdf == 'generate_excel') {
+            $filename = 'payment_report_' . time() . '.xls';
+            $html = $this->load->view('payment_report_excel', $data, true);
+            header("Content-type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment; filename=$filename");
+            echo $html;
+        } else {
+            $this->load->view('form_payment_report_search_data', $data);
+        }
+    }
+
+    function print_payment_report() {
+        $data_id = $this->uri->segment(3);
+        $accounting_year = $this->uri->segment(4);
+        $data['encrypted_data'] = $data_id;
+        $sess_array = $this->session->userdata('logged_in');
+        $company = $sess_array['comp_code'];
+        $data_id = str_replace("~", "/", $data_id);
+        $data_id = str_replace("-", "=", $data_id);
+        $data_id = str_replace(".", "+", $data_id);
+        $book_num = $this->encryption->decrypt($data_id);
+        $invoiceId = decrypt($this->uri->segment(5)) ?? null;
+        $data['vno'] = $this->invoice_model->invoice_edit($book_num, $accounting_year, $company, $invoiceId);
+        $data['company'] = $this->invoice_model->select_company($company);
+        $this->load->library('pdfgenerator');
+        $html = $this->load->view('invoice_pdf', $data, true);
+        $filename = 'invoice_report_' . time();
+        $this->pdfgenerator->generate($html, $filename, true, 'A4', 'portrait');
+    }
+
 }
 
 ?>
