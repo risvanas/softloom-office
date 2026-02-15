@@ -1051,24 +1051,21 @@ class Invoice extends MX_Controller {
     }
 
     function print_payment_report() {
-        $data_id = $this->uri->segment(3);
-        $accounting_year = $this->uri->segment(4);
-        $data['encrypted_data'] = $data_id;
+        $pay_id     = decrypt($this->uri->segment(3));
+        $year_code  = $this->uri->segment(4);
         $sess_array = $this->session->userdata('logged_in');
-        $company = $sess_array['comp_code'];
-        $data_id = str_replace("~", "/", $data_id);
-        $data_id = str_replace("-", "=", $data_id);
-        $data_id = str_replace(".", "+", $data_id);
-        $book_num = $this->encryption->decrypt($data_id);
-        $invoiceId = decrypt($this->uri->segment(5)) ?? null;
-        $data['vno'] = $this->invoice_model->invoice_edit($book_num, $accounting_year, $company, $invoiceId);
-        $data['company'] = $this->invoice_model->select_company($company);
+        $company    = $sess_array['comp_code'];
+
+        $data['msg']            = '';
+        $data['errmsg']         = '';
+        $data['company']        = $this->invoice_model->select_company(2);
+        $data['fee_details']    = $this->db->query("select tbl_student.NAME as name,tbl_student.STUDENT_ID, tbl_student.FEE_AMOUNT, tbl_student.COURSE as course, tbl_student.ADDRESS1, tbl_student.ADDRESS2, tbl_student.ADDRESS3,tbl_student.CONTACT_NO, tbl_transaction.*, tbl_payment.TRANSACTION_TYPE, tbl_payment.DUE_DATE, tbl_payment.CHEQUE_NUMBER, tbl_payment.CHEQUE_DATE, tbl_payment.PAYMENT_TYPE, tbl_payment.INVOICE_TYPE, tbl_payment.SUB_TOTAL_PRICE, tbl_payment.SGST_PERCENT, tbl_payment.CGST_PERCENT, tbl_payment.SGST_AMOUNT, tbl_payment.CGST_AMOUNT, tbl_payment.ROUND_OFF, tbl_account.ACC_NAME as course_name from tbl_payment join tbl_student on tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID join tbl_account on tbl_student.course = tbl_account.ACC_ID left join tbl_transaction on tbl_payment.PAY_ID=tbl_transaction.PAYMENT_ID where tbl_payment.PAY_ID=$pay_id and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD' and tbl_transaction.BOOK_NAME='PAY' and CREDIT IS NOT NULL  AND tbl_transaction.COMPANY=$company AND tbl_transaction.ACC_YEAR_CODE=$year_code");
+     
         $this->load->library('pdfgenerator');
-        $html = $this->load->view('invoice_pdf', $data, true);
-        $filename = 'invoice_report_' . time();
+        $html = $this->load->view('payment_report_pdf_invoice', $data, true);
+        $filename = 'payment_report_' . time();
         $this->pdfgenerator->generate($html, $filename, true, 'A4', 'portrait');
     }
-
 }
 
 ?>

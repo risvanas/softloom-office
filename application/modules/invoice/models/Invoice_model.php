@@ -264,7 +264,7 @@ class Invoice_model extends CI_Model {
 
     function get_payment_report_list($dat_from, $dat_to, $key_words, $invoice_type)
     {
-        $this->db->select('tbl_payment.*,tbl_student.*,tbl_accounting_year.FROM_DATE as year_code_from,tbl_accounting_year.TO_DATE as year_code_to');
+        $this->db->select('tbl_payment.*,tbl_student.*,tbl_accounting_year.AY_ID as year_code_id,tbl_accounting_year.FROM_DATE as year_code_from,tbl_accounting_year.TO_DATE as year_code_to');
         $this->db->from('tbl_payment');
         $this->db->join('tbl_accounting_year', 'tbl_accounting_year.AY_ID=tbl_payment.ACC_YEAR_CODE','left');
         $this->db->join('tbl_student', 'tbl_payment.STUDENT_ID=tbl_student.STUDENT_ID','left');
