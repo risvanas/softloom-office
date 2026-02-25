@@ -35,7 +35,7 @@
         </tr>
         <!--<div class="panel-body">-->
         <tr>
-            <td colspan="8" style="text-align: center;font-weight: 700">Payment Report</td>
+            <td colspan="8" style="text-align: center;font-weight: 700">Invoice List</td>
         </tr>
         <thead>
             <tr>

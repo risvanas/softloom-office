@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Payment Report</title>
+    <title>Invoice List</title>
     <style>
         body {
             font-size: 13px;
@@ -241,7 +241,7 @@
     </div>
     <div id="content">
         <div id="mynewdiv">
-            <h2>Payment Report</h2>
+            <h2>Invoice List</h2>
             <table cellspacing="0" cellpadding="0" class="main table" style="margin-bottom: 5px;">
                 <thead>
                     <tr>

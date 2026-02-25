@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <!-- start: DYNAMIC TABLE PANEL -->
         <div class="panel panel-default">
-            <div class="panel-heading"> <i class="icon-external-link-sign"></i> Payment Report
+            <div class="panel-heading"> <i class="icon-external-link-sign"></i> Invoice List
                 <div class="panel-tools">
                     <form action="<?php echo site_url('invoice/get_payment_report_list'); ?>" method="post" id="form_excel_pdf" name="form_excel_pdf" target="_blank">
                         <input type="hidden" name="frm" id="frm" value="">
@@ -20,7 +20,7 @@
 
             <!-- end: PAGE TITLE & BREADCRUMB -->
             <div class="col-md-12">
-                <h1>Payment Report<small></small></h1>
+                <h1>Invoice List<small></small></h1>
                 <hr />
             </div>
             <div class="row">

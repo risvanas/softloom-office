@@ -1004,10 +1004,10 @@ class Invoice extends MX_Controller {
 
     function payment_report() {
         $menu_id = 80;
-        // $this->load->library('../controllers/permition_checker');
-        $this->permition_checker->permition_viewprocess($menu_id);
+        $this->load->library('../controllers/permition_checker');
+        // $this->permition_checker->permition_viewprocess($menu_id);
         $data['company'] = $this->invoice_model->select_company();
-        $layout = array('page' => 'form_payment_report', 'title' => 'Payment Report', 'data' => $data);
+        $layout = array('page' => 'form_payment_report', 'title' => 'Invoice List', 'data' => $data);
         render_template($layout);
     }
 
