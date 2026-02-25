@@ -61,7 +61,7 @@
                     $from_date = date("y", strtotime($row->year_code_from));
                     $to_date = date("y", strtotime($row->year_code_to));
                     ?>
-                    <td>PAY<?php echo $row->PAY_NUMBER . " / " . $from_date . "-" . $to_date; ?></td>
+                    <td>PAY<?php echo format_book_number($row->BOOK_NUMBER) . "/" . $from_date . "-" . $to_date; ?></td>
                     <td><?php echo date("d-m-Y", strtotime($row->PAYMENT_DATE)); ?></td>
                     <td><?php echo $row->NAME; ?></td>
                     <td><?php echo ucwords(strtolower(str_replace('_', ' ', $row->INVOICE_TYPE))); ?></td>

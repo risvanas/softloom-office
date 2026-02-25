@@ -34,3 +34,10 @@ if (!function_exists('decrypt')) {
         return $CI->encryption->decrypt($encrypted_data);
     }
 }
+
+if (!function_exists('format_book_number')) {
+    function format_book_number($number, $length = 3)
+    {
+        return str_pad($number, $length, '0', STR_PAD_LEFT);
+    }
+}

@@ -1,8 +1,10 @@
 <?php
 
-class Feecollection extends MX_Controller {
+class Feecollection extends MX_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->helper(array('form', 'template'));
         $this->template->set_template('admin_template');
@@ -11,7 +13,8 @@ class Feecollection extends MX_Controller {
         $this->load->model('fee_model');
     }
 
-    function index() {
+    function index()
+    {
         $menu_id = 32;
         $this->load->library('../controllers/permition_checker');
         $data['parent_account'] = $this->fee_model->selectAll('tbl_account');
@@ -87,18 +90,33 @@ class Feecollection extends MX_Controller {
 
                 $total_tax_percent = ($sgst_percent + $cgst_percent) / 100;
                 $base_amount = $amt / (1 + $total_tax_percent);
-                
+
                 $sgst_amt = $base_amount * ($sgst_percent / 100);
                 $cgst_amt = $base_amount * ($cgst_percent / 100);
-                
+
                 $sub_total_amt = $base_amount;
             } else {
                 $sgst_amt = 0;
                 $cgst_amt = 0;
                 $sub_total_amt = $amt;
             }
-            
-            $pay_data = array('PAY_NUMBER' => $pay_num,
+
+            $start_number = ($invoice_type == 'with_tax') ? 100 : 0;
+
+            $paymentData = $this->db->select("IFNULL(MAX(BOOK_NUMBER), $start_number) + 1 AS BOOK_NUMBER")
+                ->from('tbl_transaction')
+                ->where([
+                    'ACC_YEAR_CODE' => $year_code,
+                    'DEL_FLAG'      => 1,
+                    'INVOICE_TYPE'  => $invoice_type,
+                    'COMPANY'       => $company_code
+                ])
+                ->get()
+                ->row_array();
+
+            $pay_data = array(
+                'PAY_NUMBER' => $pay_num,
+                'BOOK_NUMBER' => $paymentData['BOOK_NUMBER'] ?? $start_number + 1,
                 'INVOICE_TYPE' => $invoice_type,
                 'STUDENT_ID' => $name,
                 'DEL_FLAG' => 1,
@@ -124,7 +142,8 @@ class Feecollection extends MX_Controller {
                 'COMPANY' => $company_code,
                 'CREATED_BY' => $create_by,
                 'CREATED_ON' => $create_on,
-                'LOCATION_DETAILS' => $location_details);
+                'LOCATION_DETAILS' => $location_details
+            );
             $this->fee_model->trans_ins('tbl_payment', $pay_data);
             $pay_id = $this->db->insert_id();
 
@@ -136,7 +155,8 @@ class Feecollection extends MX_Controller {
             if ($trans_type == "cash") {
                 $book_num = $row['BOOK_NUMBER'];
                 $remarks = "Cash from" . " " . $stud_name . " " . "(Course Fee)";
-                $ceredt_data = array('FIN_YEAR_ID' => 2,
+                $ceredt_data = array(
+                    'FIN_YEAR_ID' => 2,
                     'INVOICE_TYPE' => $invoice_type,
                     'ACC_ID' => 38,
                     'DATE_OF_TRANSACTION' => $pay_date,
@@ -157,7 +177,8 @@ class Feecollection extends MX_Controller {
                     'TRANSACTION_DATE' => $entry_date
                 );
 
-                $debit_data = array('FIN_YEAR_ID' => 2,
+                $debit_data = array(
+                    'FIN_YEAR_ID' => 2,
                     'INVOICE_TYPE' => $invoice_type,
                     'ACC_ID' => 39,
                     'DATE_OF_TRANSACTION' => $pay_date,
@@ -187,7 +208,8 @@ class Feecollection extends MX_Controller {
                 //$row = $query->row_array();
                 //$bank_accid=$row['ACC_ID'];
                 $remarks = $stud_name . " " . "(Course Fee) " . $chq_no;
-                $ceredt_data = array('FIN_YEAR_ID' => 2,
+                $ceredt_data = array(
+                    'FIN_YEAR_ID' => 2,
                     'INVOICE_TYPE' => $invoice_type,
                     'ACC_ID' => 38,
                     'DATE_OF_TRANSACTION' => $pay_date,
@@ -205,9 +227,11 @@ class Feecollection extends MX_Controller {
                     'CREATED_BY' => $create_by,
                     'CREATED_ON' => $create_on,
                     'LOCATION_DETAILS' => $location_details,
-                    'TRANSACTION_DATE' => $entry_date);
+                    'TRANSACTION_DATE' => $entry_date
+                );
 
-                $debit_data = array('FIN_YEAR_ID' => 2,
+                $debit_data = array(
+                    'FIN_YEAR_ID' => 2,
                     'INVOICE_TYPE' => $invoice_type,
                     'ACC_ID' => $bank_id,
                     'DATE_OF_TRANSACTION' => $pay_date,
@@ -224,7 +248,8 @@ class Feecollection extends MX_Controller {
                     'CREATED_BY' => $create_by,
                     'CREATED_ON' => $create_on,
                     'LOCATION_DETAILS' => $location_details,
-                    'TRANSACTION_DATE' => $entry_date);
+                    'TRANSACTION_DATE' => $entry_date
+                );
                 $this->fee_model->trans_ins('tbl_transaction', $ceredt_data);
                 $this->fee_model->trans_ins('tbl_transaction', $debit_data);
             }
@@ -239,12 +264,13 @@ class Feecollection extends MX_Controller {
             $this->session->set_flashdata('msg', $data['msg']);
             $this->session->set_flashdata('errmsg', $data['errmsg']);
             redirect('feecollection');
-//            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//            render_template($layout);
+            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+            //            render_template($layout);
         }
     }
 
-    function bank_details() {
+    function bank_details()
+    {
 
         $type = $this->input->post('type');
         if ($type == 'bank') {
@@ -254,14 +280,16 @@ class Feecollection extends MX_Controller {
         }
     }
 
-    function payment_stud_details() {
+    function payment_stud_details()
+    {
 
         $sid = $this->input->post('sname');
         $data['res'] = $this->fee_model->stud_details('tbl_payment', $sid);
         $this->load->view('form_stud_details', $data);
     }
 
-    function student_details() {
+    function student_details()
+    {
         $sid = $this->input->post('sname');
 
         $data['rs'] = $this->fee_model->select_course('tbl_student', $sid);
@@ -269,14 +297,16 @@ class Feecollection extends MX_Controller {
         $this->load->view('form_stud_details', $data);
     }
 
-    function student_names() {
+    function student_names()
+    {
         $cname = $this->input->post('cname');
         $this->load->model('fee_model');
         $data['name'] = $this->fee_model->select_stud_name('tbl_student', $cname);
         $this->load->view('form_stud_name', $data);
     }
 
-    function fee_edit() {
+    function fee_edit()
+    {
         $menu_id = 32;
         $this->load->library('../controllers/permition_checker');
         $this->permition_checker->permition_editprocess($menu_id);
@@ -288,7 +318,8 @@ class Feecollection extends MX_Controller {
         render_template($layout);
     }
 
-    function fee_update() {
+    function fee_update()
+    {
         $menu_id = 32;
         $this->load->library('../controllers/permition_checker');
         $this->permition_checker->permition_editprocess($menu_id);
@@ -305,9 +336,9 @@ class Feecollection extends MX_Controller {
             $data['s'] = $this->fee_model->select_acc_type('tbl_account');
             $data['msg'] = '';
             $data['errmsg'] = $message_display;
-//            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//            render_template($layout);
-//            return FALSE;
+            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+            //            render_template($layout);
+            //            return FALSE;
             redirect('feecollection');
         }
         $book_num = $this->input->post('hdd_book_num');
@@ -339,8 +370,8 @@ class Feecollection extends MX_Controller {
             $data['s'] = $this->fee_model->select_acc_type('tbl_account');
             $data['msg'] = '';
             $data['errmsg'] = '';
-//            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//            render_template($layout);
+            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+            //            render_template($layout);
             redirect('feecollection');
         }
         if ($pay_id != "") {
@@ -364,10 +395,10 @@ class Feecollection extends MX_Controller {
 
                     $total_tax_percent = ($sgst_percent + $cgst_percent) / 100;
                     $base_amount = $amt / (1 + $total_tax_percent);
-                    
+
                     $sgst_amt = $base_amount * ($sgst_percent / 100);
                     $cgst_amt = $base_amount * ($cgst_percent / 100);
-                    
+
                     $sub_total_amt = $base_amount;
                 } else {
                     $sgst_amt = 0;
@@ -376,7 +407,8 @@ class Feecollection extends MX_Controller {
                 }
 
                 $this->db->query("update tbl_payment set DEL_FLAG=0 where TYPE='STD' AND PAY_ID=" . $pay_id . " and COMPANY='$company_code'");
-                $pay_update = array('PAY_NUMBER' => $pay_number,
+                $pay_update = array(
+                    'PAY_NUMBER' => $pay_number,
                     'STUDENT_ID' => $stud_id,
                     'DEL_FLAG' => 1,
                     'AMOUNT' => $amt,
@@ -401,14 +433,16 @@ class Feecollection extends MX_Controller {
                     'COMPANY' => $company_code,
                     'MODIFIED_BY' => $modified_by,
                     'MODIFIED_ON' => $modified_on,
-                    'LOCATION_DETAILS' => $location_details);
+                    'LOCATION_DETAILS' => $location_details
+                );
                 $this->fee_model->trans_ins('tbl_payment', $pay_update);
                 $ins_pay_id = $this->db->insert_id();
                 $this->db->query("update tbl_transaction set DEL_FLAG=0 where PAYMENT_ID=$pay_id AND BOOK_NAME='PAY' and COMPANY='$company_code'");
 
                 if ($trans_type == "cash") {
                     $remarks = "Cash from" . " " . $stud_name . " " . "(Course Fee)";
-                    $ceredt_data = array('FIN_YEAR_ID' => 2,
+                    $ceredt_data = array(
+                        'FIN_YEAR_ID' => 2,
                         'ACC_ID' => 38,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'CREDIT' => $amt,
@@ -424,9 +458,11 @@ class Feecollection extends MX_Controller {
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details);
+                        'LOCATION_DETAILS' => $location_details
+                    );
 
-                    $debit_data = array('FIN_YEAR_ID' => 2,
+                    $debit_data = array(
+                        'FIN_YEAR_ID' => 2,
                         'ACC_ID' => 39,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'DEBIT' => $amt,
@@ -442,7 +478,8 @@ class Feecollection extends MX_Controller {
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details);
+                        'LOCATION_DETAILS' => $location_details
+                    );
                     $this->fee_model->trans_ins('tbl_transaction', $ceredt_data);
                     $this->fee_model->trans_ins('tbl_transaction', $debit_data);
                 }
@@ -453,7 +490,8 @@ class Feecollection extends MX_Controller {
                     //$row = $query->row_array();
                     //$bank_accid=$row['ACC_ID'];
                     $remarks = $stud_name . " " . "(Course Fee) " . $chq_no;
-                    $ceredt_data = array('FIN_YEAR_ID' => 2,
+                    $ceredt_data = array(
+                        'FIN_YEAR_ID' => 2,
                         'ACC_ID' => 38,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'CREDIT' => $amt,
@@ -469,9 +507,11 @@ class Feecollection extends MX_Controller {
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details);
+                        'LOCATION_DETAILS' => $location_details
+                    );
 
-                    $debit_data = array('FIN_YEAR_ID' => 2,
+                    $debit_data = array(
+                        'FIN_YEAR_ID' => 2,
                         'ACC_ID' => $bank,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'DEBIT' => $amt,
@@ -487,7 +527,8 @@ class Feecollection extends MX_Controller {
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details);
+                        'LOCATION_DETAILS' => $location_details
+                    );
                     $this->fee_model->trans_ins('tbl_transaction', $ceredt_data);
                     $this->fee_model->trans_ins('tbl_transaction', $debit_data);
                 }
@@ -504,8 +545,8 @@ class Feecollection extends MX_Controller {
 
                 $this->session->set_flashdata('msg', $data['msg']);
                 $this->session->set_flashdata('errmsg', $data['errmsg']);
-//                $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//                render_template($layout);
+                //                $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+                //                render_template($layout);
                 redirect('feecollection');
             } else {
                 $data['parent_account'] = $this->fee_model->selectAll('tbl_account');
@@ -516,15 +557,16 @@ class Feecollection extends MX_Controller {
 
                 $this->session->set_flashdata('msg', $data['msg']);
                 $this->session->set_flashdata('errmsg', $data['errmsg']);
-//                $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//                render_template($layout);
-//                return FALSE;
+                //                $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+                //                render_template($layout);
+                //                return FALSE;
                 redirect('feecollection');
             }
         }
     }
 
-    function fee_delete() {
+    function fee_delete()
+    {
         $menu_id = 32;
         $this->load->library('../controllers/permition_checker');
         $this->permition_checker->permition_deleteprocess($menu_id);
@@ -549,10 +591,12 @@ class Feecollection extends MX_Controller {
             $this->load->library('../controllers/lockdate');
             $location_details = $this->lockdate->location_details();
             $deleted_on = gmdate("Y-m-d H:i:s");
-            $data = array('DEL_FLAG' => '0',
+            $data = array(
+                'DEL_FLAG' => '0',
                 'DELETED_BY' => $deleted_by,
                 'DELETED_ON' => $deleted_on,
-                'LOCATION_DETAILS' => $location_details);
+                'LOCATION_DETAILS' => $location_details
+            );
             $this->fee_model->delete_data('tbl_payment', $data, $id);
             $this->fee_model->delete_data1('tbl_transaction', $data, $id);
 
@@ -561,8 +605,8 @@ class Feecollection extends MX_Controller {
             $data['s'] = $this->fee_model->select_acc_type('tbl_account');
             $data['msg'] = 'Delete successfully';
             $data['errmsg'] = "";
-//            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//            render_template($layout);
+            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+            //            render_template($layout);
             redirect('feecollection');
         } else {
             $data['parent_account'] = $this->fee_model->selectAll('tbl_account');
@@ -570,14 +614,15 @@ class Feecollection extends MX_Controller {
             $data['s'] = $this->fee_model->select_acc_type('tbl_account');
             $data['msg'] = '';
             $data['errmsg'] = $message_display;
-//            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-//            render_template($layout);
-//            return FALSE;
+            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
+            //            render_template($layout);
+            //            return FALSE;
             redirect('feecollection');
         }
     }
 
-    function coursecompletion() {
+    function coursecompletion()
+    {
         $menu_id = 25;
         $this->load->library('../controllers/permition_checker');
         $this->form_validation->set_rules('txt_completed_date', 'Completed Date', 'required');
@@ -616,13 +661,11 @@ class Feecollection extends MX_Controller {
         }
     }
 
-    function completion_details() {
+    function completion_details()
+    {
         $sid = $this->input->post('sname');
         $data['stud'] = $this->fee_model->select_course('tbl_student', $sid);
         $data['res'] = $this->fee_model->stud_details('tbl_transaction', $sid);
         $this->load->view('form_completion_details', $data);
     }
-
 }
-
-?>

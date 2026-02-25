@@ -250,7 +250,8 @@
                     <tr align="center">
                         <th>Number</th>
                         <th>Date</th>
-                        <th>Name</th>
+                        <th>Customer Name</th>
+                        <th>GST No</th>
                         <th>Invoice Type</th>
                         <th>Amount</th>
                         <th>Tax Amount</th>
@@ -268,9 +269,10 @@
                             $to_date = date("y", strtotime($row->year_code_to));
                             ?>
 
-                            <td align="center">PAY<?php echo $row->PAY_NUMBER . " / " . $from_date . "-" . $to_date; ?></td>
+                            <td align="center">PAY<?php echo format_book_number($row->BOOK_NUMBER) . "/" . $from_date . "-" . $to_date; ?></td>
                             <td align="center"><?php echo date("d-m-Y", strtotime($row->PAYMENT_DATE)); ?></td>
                             <td align="center"><?php echo $row->NAME; ?></td>
+                            <td align="center"></td>
                             <td align="center"><?php echo ucwords(strtolower(str_replace('_', ' ', $row->INVOICE_TYPE))); ?></td>
                             <td align="right">
                                 <?php echo $row->SUB_TOTAL_PRICE;
@@ -289,7 +291,7 @@
                     }
                     ?>
                     <tr align="right">
-                        <td colspan="4" style="text-align: right;">Total</td>
+                        <td colspan="5" style="text-align: right;">Total</td>
                         <td><?php echo number_format($sub_total, 2); ?></td>
                         <td><?php echo number_format($gst_amt, 2); ?></td>
                         <td><?php echo number_format($tot_amt, 2); ?></td>

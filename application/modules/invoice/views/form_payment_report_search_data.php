@@ -23,7 +23,7 @@
           $from_date = date("y", strtotime($row->year_code_from));
           $to_date = date("y", strtotime($row->year_code_to));
           ?>
-          <td><a href="<?php echo site_url('invoice/print_payment_report') . encrypt($row->PAY_ID) . "/" . $row->year_code_id; ?> " target="_blank">PAY<?php echo $row->PAY_NUMBER . "/" . $from_date . "-" . $to_date; ?></a></td>
+          <td><a href="<?php echo site_url('invoice/print_payment_report') . encrypt($row->PAY_ID) . "/" . $row->year_code_id; ?> " target="_blank">PAY<?php echo format_book_number($row->BOOK_NUMBER) . "/" . $from_date . "-" . $to_date; ?></a></td>
           <td><?php echo date("d-m-Y", strtotime($row->PAYMENT_DATE)); ?></td>
           <td><?php echo $row->NAME; ?></td>
           <td><?php echo ucwords(strtolower(str_replace('_', ' ', $row->INVOICE_TYPE))); ?></td>

@@ -178,7 +178,7 @@
         $course_name = $row->course_name;
         $FEE_AMOUNT = $row->FEE_AMOUNT;
         $BOOK_NAME = $row->BOOK_NAME;
-        $BOOK_NUMBER = $row->BOOK_NUMBER;
+        $BOOK_NUMBER = format_book_number($row->payment_book_number);
         $DATE_OF_TRANSACTION = $row->DATE_OF_TRANSACTION;
         $FEE_AMOUNT = $row->FEE_AMOUNT;
         $TRANSACTION_TYPE = $row->TRANSACTION_TYPE;
@@ -304,7 +304,7 @@
                         <div class="address">Course: &nbsp;<b><?php echo $course_name ?></b></div>
                     </td>
                     <td id="invoice">
-                        <h1><?php echo $BOOK_NAME . $BOOK_NUMBER . " / " . $year_code_from . "-" . $year_code_to; ?></h1>
+                        <h1><?php echo $BOOK_NAME . $BOOK_NUMBER . "/" . $year_code_from . "-" . $year_code_to; ?></h1>
                         <div class="date">Date: <?php echo date('d-M-Y', strtotime($DATE_OF_TRANSACTION)); ?></div>
                     </td>
                 </tr>

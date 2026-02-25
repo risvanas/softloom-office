@@ -1002,11 +1002,10 @@ class Invoice extends MX_Controller {
         }
     }
 
-
     function payment_report() {
         $menu_id = 80;
-        $this->load->library('../controllers/permition_checker');
-        // $this->permition_checker->permition_viewprocess($menu_id);
+        // $this->load->library('../controllers/permition_checker');
+        $this->permition_checker->permition_viewprocess($menu_id);
         $data['company'] = $this->invoice_model->select_company();
         $layout = array('page' => 'form_payment_report', 'title' => 'Payment Report', 'data' => $data);
         render_template($layout);
@@ -1059,7 +1058,7 @@ class Invoice extends MX_Controller {
         $data['msg']            = '';
         $data['errmsg']         = '';
         $data['company']        = $this->invoice_model->select_company(2);
-        $data['fee_details']    = $this->db->query("select tbl_student.NAME as name,tbl_student.STUDENT_ID, tbl_student.FEE_AMOUNT, tbl_student.COURSE as course, tbl_student.ADDRESS1, tbl_student.ADDRESS2, tbl_student.ADDRESS3,tbl_student.CONTACT_NO, tbl_transaction.*, tbl_payment.TRANSACTION_TYPE, tbl_payment.DUE_DATE, tbl_payment.CHEQUE_NUMBER, tbl_payment.CHEQUE_DATE, tbl_payment.PAYMENT_TYPE, tbl_payment.INVOICE_TYPE, tbl_payment.SUB_TOTAL_PRICE, tbl_payment.SGST_PERCENT, tbl_payment.CGST_PERCENT, tbl_payment.SGST_AMOUNT, tbl_payment.CGST_AMOUNT, tbl_payment.ROUND_OFF, tbl_account.ACC_NAME as course_name from tbl_payment join tbl_student on tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID join tbl_account on tbl_student.course = tbl_account.ACC_ID left join tbl_transaction on tbl_payment.PAY_ID=tbl_transaction.PAYMENT_ID where tbl_payment.PAY_ID=$pay_id and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD' and tbl_transaction.BOOK_NAME='PAY' and CREDIT IS NOT NULL  AND tbl_transaction.COMPANY=$company AND tbl_transaction.ACC_YEAR_CODE=$year_code");
+        $data['fee_details']    = $this->db->query("select tbl_student.NAME as name,tbl_student.STUDENT_ID, tbl_student.FEE_AMOUNT, tbl_student.COURSE as course, tbl_student.ADDRESS1, tbl_student.ADDRESS2, tbl_student.ADDRESS3,tbl_student.CONTACT_NO, tbl_transaction.*, tbl_payment.TRANSACTION_TYPE, tbl_payment.BOOK_NUMBER as payment_book_number, tbl_payment.DUE_DATE, tbl_payment.CHEQUE_NUMBER, tbl_payment.CHEQUE_DATE, tbl_payment.PAYMENT_TYPE, tbl_payment.INVOICE_TYPE, tbl_payment.SUB_TOTAL_PRICE, tbl_payment.SGST_PERCENT, tbl_payment.CGST_PERCENT, tbl_payment.SGST_AMOUNT, tbl_payment.CGST_AMOUNT, tbl_payment.ROUND_OFF, tbl_account.ACC_NAME as course_name from tbl_payment join tbl_student on tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID join tbl_account on tbl_student.course = tbl_account.ACC_ID left join tbl_transaction on tbl_payment.PAY_ID=tbl_transaction.PAYMENT_ID where tbl_payment.PAY_ID=$pay_id and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD' and tbl_transaction.BOOK_NAME='PAY' and CREDIT IS NOT NULL  AND tbl_transaction.COMPANY=$company AND tbl_transaction.ACC_YEAR_CODE=$year_code");
      
         $this->load->library('pdfgenerator');
         $html = $this->load->view('payment_report_pdf_invoice', $data, true);
