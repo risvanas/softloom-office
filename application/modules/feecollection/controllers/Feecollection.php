@@ -103,7 +103,7 @@ class Feecollection extends MX_Controller
 
             $start_number = ($invoice_type == 'with_tax') ? 100 : 0;
 
-            $paymentData = $this->db->select("IFNULL(MAX(BOOK_NUMBER), $start_number) + 1 AS BOOK_NUMBER")
+            $paymentData = $this->db->select("IFNULL(MAX(BOOK_NUMBER), $start_number) + 1 AS BOOK_NUMBER", false)
                 ->from('tbl_transaction')
                 ->where([
                     'ACC_YEAR_CODE' => $year_code,
