@@ -172,9 +172,9 @@ data-backdrop="static" data-keyboard="false" style="display: none;">
                         <div class="col-md-3"> Status
                           <select name="sel_status" class="form-control">
                             <?php
-			 $sel="select * from tbl_status";
-			 $sql=mysql_query($sel);
-			 while($res=mysql_fetch_array($sql))
+			 $CI =& get_instance();
+			 $sql = $CI->db->get('tbl_status');
+			 foreach ($sql->result_array() as $res)
 			 {
 				 ?>
                             <option value="<?php echo $res['status']; ?>" <?php if($res['status']==$stat) echo "selected"; ?>><?php echo $res['status']; ?></option>

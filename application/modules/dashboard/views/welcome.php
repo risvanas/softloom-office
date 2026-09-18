@@ -186,11 +186,29 @@ ini_set('memory_limit', '-1');
                                             $sess_data = $this->session->userdata('logged_in');
                                             $user_id = $sess_data['user_id'];
                                             $date = date('Y-m-d', strtotime('+1 month'));
-                                            //$sql1 = "SELECT * FROM `tbl_invoice` JOIN tbl_account ON tbl_account.ACC_ID=tbl_invoice.CUSTOMER_ID WHERE tbl_invoice.`DEL_FLAG`=1 AND `REC_COMPLETE_FLAG`=1 AND `NEXT_INVOICE_DATE` < '$date' AND `NEXT_INVOICE_DATE`!=0 AND `NEXT_INVOICE_DATE`!='1970-01-01' ORDER BY `NEXT_INVOICE_DATE` ASC";//AND INVOICE_ID in(select  MAX(`INVOICE_ID`) from tbl_invoice GROUP by `CUSTOMER_ID`)
-                                            $sql1 = "select * from (SELECT `ACC_YEAR_CODE`, `INVOICE_ID`, `CUSTOMER_ID`, `INVOICE_TYPE`, `COMPANY`, `BOOK_NUMBER`, `BOOK_NAME`, `INVOICE_DATE`, `DESCRIPTION`, `INVOICE_RECURRING`, `INVOICE_RECURRING_TYPE`, `INVOICE_RECURRING_COMMENT`, `NEXT_INVOICE_DATE`, `REC_COMPLETE_FLAG`,tbl_account.ACC_NAME FROM `tbl_invoice` JOIN tbl_account ON tbl_account.ACC_ID=tbl_invoice.CUSTOMER_ID WHERE tbl_invoice.`DEL_FLAG`=1 AND `REC_COMPLETE_FLAG`=1 AND `NEXT_INVOICE_DATE` < '2019-08-19' AND `NEXT_INVOICE_DATE`!=0 AND `NEXT_INVOICE_DATE`!='1970-01-01' 
-UNION ALL
-SELECT `ACC_YEAR_CODE`, `INVOICE_ID`, `CUSTOMER_ID`, `INVOICE_TYPE`, `COMPANY`, `BOOK_NUMBER`, `BOOK_NAME`, `INVOICE_DATE`, `DESCRIPTION`, `INVOICE_RECURRING`, `INVOICE_RECURRING_TYPE`, `INVOICE_RECURRING_COMMENT`, `NEXT_INVOICE_DATE`, `REC_COMPLETE_FLAG`,tbl_account.ACC_NAME FROM `tbl_temp_invoice` JOIN tbl_account ON tbl_account.ACC_ID=tbl_temp_invoice.CUSTOMER_ID WHERE tbl_temp_invoice.`DEL_FLAG`=1 AND `REC_COMPLETE_FLAG`=1 AND `NEXT_INVOICE_DATE` < '2019-08-19' AND `NEXT_INVOICE_DATE`!=0 AND `NEXT_INVOICE_DATE`!='1970-01-01' 
-ORDER BY `NEXT_INVOICE_DATE` desc) abc join tbl_account ON tbl_account.ACC_ID=abc.CUSTOMER_ID group by CUSTOMER_ID,DESCRIPTION order by abc.`NEXT_INVOICE_DATE`";
+                                            $cutoffDate = $this->db->escape($date);
+                                            $recurringFilter = "`DEL_FLAG`=1 AND `REC_COMPLETE_FLAG`=1 AND `NEXT_INVOICE_DATE` < $cutoffDate AND `NEXT_INVOICE_DATE`!=0 AND `NEXT_INVOICE_DATE`!='1970-01-01'";
+                                            $sql1 = "SELECT abc.*, tbl_account.ACC_NAME
+FROM (
+    SELECT `ACC_YEAR_CODE`, `INVOICE_ID`, `CUSTOMER_ID`, `INVOICE_TYPE`, `COMPANY`, `BOOK_NUMBER`, `BOOK_NAME`, `INVOICE_DATE`, `DESCRIPTION`, `INVOICE_RECURRING`, `INVOICE_RECURRING_TYPE`, `INVOICE_RECURRING_COMMENT`, `NEXT_INVOICE_DATE`, `REC_COMPLETE_FLAG`
+    FROM `tbl_invoice`
+    WHERE $recurringFilter
+    UNION ALL
+    SELECT `ACC_YEAR_CODE`, `INVOICE_ID`, `CUSTOMER_ID`, `INVOICE_TYPE`, `COMPANY`, `BOOK_NUMBER`, `BOOK_NAME`, `INVOICE_DATE`, `DESCRIPTION`, `INVOICE_RECURRING`, `INVOICE_RECURRING_TYPE`, `INVOICE_RECURRING_COMMENT`, `NEXT_INVOICE_DATE`, `REC_COMPLETE_FLAG`
+    FROM `tbl_temp_invoice`
+    WHERE $recurringFilter
+) abc
+INNER JOIN (
+    SELECT CUSTOMER_ID, DESCRIPTION, MAX(NEXT_INVOICE_DATE) AS max_next_date
+    FROM (
+        SELECT CUSTOMER_ID, DESCRIPTION, NEXT_INVOICE_DATE FROM `tbl_invoice` WHERE $recurringFilter
+        UNION ALL
+        SELECT CUSTOMER_ID, DESCRIPTION, NEXT_INVOICE_DATE FROM `tbl_temp_invoice` WHERE $recurringFilter
+    ) recurring_src
+    GROUP BY CUSTOMER_ID, DESCRIPTION
+) pick ON abc.CUSTOMER_ID = pick.CUSTOMER_ID AND abc.DESCRIPTION = pick.DESCRIPTION AND abc.NEXT_INVOICE_DATE = pick.max_next_date
+JOIN tbl_account ON tbl_account.ACC_ID = abc.CUSTOMER_ID
+ORDER BY abc.`NEXT_INVOICE_DATE`";
                                             $query1 = $this->db->query($sql1);
                                             foreach ($query1->result() as $val) {
 //                                                echo "<pre>";

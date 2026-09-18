@@ -100,7 +100,6 @@
 		<script src="<?php echo base_url();?>assets/plugins/flot/jquery.flot.resize.js"></script>
 		<script src="<?php echo base_url();?>assets/plugins/flot/jquery.flot.categories.js"></script>
 		<script src="<?php echo base_url();?>assets/plugins/flot/jquery.flot.pie.js"></script>
-		<script type="text/javascript" src="/assets/script/canvasjs.min.js"></script>
 		
  <script>
 			jQuery(document).ready(function() {

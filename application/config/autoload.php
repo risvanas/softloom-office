@@ -60,7 +60,7 @@ $autoload['packages'] = array(APPPATH.'third_party');
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 
-$autoload['libraries'] = array('database','template','session');
+$autoload['libraries'] = array('database', 'db_compat', 'template', 'session');
 
 
 /*

@@ -40,7 +40,7 @@ class Income_and_expenditure extends MX_Controller {
         }
         $sql .= " group by tbl_account.ACC_ID";
         $data['data_pass'] = $this->db->query($sql);
-        $data['company'] = $this->income_and_expenditure_model->select_company($company);
+        $data['company'] = $this->income_and_expenditure_model->select_company($company_code);
 
         if ($generate_pdf == 'generate_pdf') {
             $this->load->library('pdfgenerator');

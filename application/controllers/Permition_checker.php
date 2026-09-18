@@ -9,7 +9,7 @@ class Permition_checker extends MX_Controller {
         $this->template->set_template('admin_template');
         $this->load->library('user_agent');
         $session_data = $this->session->userdata('logged_in');
-        if ($session_data['user_id'] == '') {
+        if (empty($session_data) || empty($session_data['user_id'])) {
             redirect(base_url());
         }
     }

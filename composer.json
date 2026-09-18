@@ -3,9 +3,10 @@
 	"name" : "codeigniter/framework",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.2.4"
+		"php": ">=8.0",
+		"dompdf/dompdf": "^3.0"
 	},
 	"require-dev": {
-		"mikey179/vfsStream": "1.1.*"
+		"mikey179/vfsstream": "1.1.*"
 	}
 }

@@ -1,51 +1,37 @@
-<?php
-$con=mysql_connect('sdb-71.hosting.stackcp.net','root','');
-mysql_select_db('softloom_account',$con);
-?>
 <table class="table table-striped table-bordered table-hover table-full-width" id="sample_1">
-       <thead>
-          <tr>
-            <th class="">No</th>
-          	<th class="">Student Name</th>
-            <th class="">Contact Number</th>
-            <th class="">Course Fee</th>
-            <th class="">Paid Amount</th>
-            <th class="">Balance Amount</th>
-          </tr>
-        </thead>
-                    <?php $n=1;
-foreach($cond->result() as $row)
-{	
-     $id=$row->STUDENT_ID;
-	$STUD_NAME = $row->NAME;
-	$CONTACT_NUMBER = $row->CONTACT_NO;
-	$COURSE_FEE=$row->FEE_AMOUNT;
-	
-	$sel="select sum(AMOUNT) as amt from tbl_payment where STUDENT_ID='$id'";
-	$sql=mysql_query($sel);
-	$res=mysql_fetch_array($sql);
-	$PAID_AMOUNT= $res['amt'];
-	$bl_amt=$COURSE_FEE-$PAID_AMOUNT;
-?>
-     <tr>
-     <td><?php echo $n; ?> </td>
-     
-	<td><?php echo $STUD_NAME; ?> </td>
-	<td><?php echo $CONTACT_NUMBER; ?> </td>
-	<td><?php echo $COURSE_FEE; ?> </td>
-	<td><?php  echo $PAID_AMOUNT; ?> </td>
-    <td> <?php echo $bl_amt; ?>
-</tr>										
-<?Php
-$n++;
-}
-?>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Student Name</th>
+            <th>Contact Number</th>
+            <th>Course Fee</th>
+            <th>Paid Amount</th>
+            <th>Balance Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $n = 1; foreach ($cond->result() as $row) {
+            $id              = $row->STUDENT_ID;
+            $stud_name       = $row->NAME;
+            $contact_number  = $row->CONTACT_NO;
+            $course_fee      = $row->FEE_AMOUNT;
+            $paid_amount     = isset($paid_amounts[$id]) ? $paid_amounts[$id] : 0;
+            $balance_amount  = $course_fee - $paid_amount;
+        ?>
+        <tr>
+            <td><?php echo $n; ?></td>
+            <td><?php echo $stud_name; ?></td>
+            <td><?php echo $contact_number; ?></td>
+            <td><?php echo $course_fee; ?></td>
+            <td><?php echo $paid_amount; ?></td>
+            <td><?php echo $balance_amount; ?></td>
+        </tr>
+        <?php $n++; } ?>
+    </tbody>
 </table>
 <script>
-	
 jQuery(document).ready(function() {
-	Main.init();
-	FormElements.init();
-	
+    Main.init();
+    FormElements.init();
 });
-		</script>
+</script>

@@ -9,6 +9,7 @@
 * @author      Dariusz Debowczyk
 * @link        http://www.codeigniter.com/user_guide/libraries/sessions.html
 */
+#[\AllowDynamicProperties]
 class Session {
 
 	var $flash_key = 'flash'; // prefix for "flash" variables (eg. flash:new:message)

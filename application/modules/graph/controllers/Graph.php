@@ -14,29 +14,37 @@ class Graph extends MX_Controller {
         $date1 = date('Y-m-d', strtotime('-6 month'));
         $dis_year = date('Y', strtotime($date1));
         $dis_month = date('m', strtotime($date1));
-        $data['sal_summary'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'SAL' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_SAL,
-			(Select COALESCE(Sum(DEBIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'INVOE' And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As D_SAL
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$date1' and tbl_transaction.DATE_OF_TRANSACTION <= '$date2' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
-        $data['sal_return'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'SALRTN' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_RTN
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$date1' and tbl_transaction.DATE_OF_TRANSACTION <= '$date2' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
-        $data['dev_return'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'DRTN' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_RTN
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$date1' and tbl_transaction.DATE_OF_TRANSACTION <= '$date2' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
+        $data['sal_summary'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'SAL' THEN t.CREDIT ELSE 0 END), 0) AS T_SAL,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'INVOE' THEN t.DEBIT ELSE 0 END), 0) AS D_SAL
+            FROM (
+                SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                FROM tbl_transaction
+                WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$date1' AND DATE_OF_TRANSACTION <= '$date2'
+            ) m
+            INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+            GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
+        $data['sal_return'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'SALRTN' THEN t.CREDIT ELSE 0 END), 0) AS T_RTN
+            FROM (
+                SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                FROM tbl_transaction
+                WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$date1' AND DATE_OF_TRANSACTION <= '$date2'
+            ) m
+            INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+            GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
+        $data['dev_return'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'DRTN' THEN t.CREDIT ELSE 0 END), 0) AS T_RTN
+            FROM (
+                SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                FROM tbl_transaction
+                WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$date1' AND DATE_OF_TRANSACTION <= '$date2'
+            ) m
+            INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+            GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
         $layout = array('page' => 'graph_view', 'title' => 'Dashboard', 'data' => $data);
         render_template($layout);
         //$this->load->view('graph_view');	
@@ -52,19 +60,19 @@ class Graph extends MX_Controller {
         $to1 = date('Y-M-d');
         $data['from'] = $from1;
         $data['to'] = $to1;
-        $data['sal_summary'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'PAY' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_SAL,
-			(Select COALESCE(Sum(DEBIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'PAYD' And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As D_SAL,
-				(Select COALESCE(Sum(CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME in ('CR','PV','BV') And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH and ACC_ID = 80) As O_SAL,
-				(Select COALESCE(Sum(CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME in ('PV','BV') And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH and ACC_ID = 97) As B_SAL
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$from_date' and tbl_transaction.DATE_OF_TRANSACTION <= '$to_date' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
+        $data['sal_summary'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'PAY' THEN t.CREDIT ELSE 0 END), 0) AS T_SAL,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'PAYD' THEN t.DEBIT ELSE 0 END), 0) AS D_SAL,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME IN ('CR','PV','BV') AND t.ACC_ID = 80 THEN t.CREDIT ELSE 0 END), 0) AS O_SAL,
+            COALESCE(SUM(CASE WHEN t.BOOK_NAME IN ('PV','BV') AND t.ACC_ID = 97 THEN t.CREDIT ELSE 0 END), 0) AS B_SAL
+            FROM (
+                SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                FROM tbl_transaction
+                WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$from_date' AND DATE_OF_TRANSACTION <= '$to_date'
+            ) m
+            INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+            GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
 
         $data['rtyp'] = "PAYMENT";
         //$this->load->view('graph_view_search',$data);
@@ -84,45 +92,53 @@ class Graph extends MX_Controller {
         $category = $this->input->post('category');
         if ($category == 'sal') {
 
-            $data['sal_summary'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'SAL' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_SAL,
-			(Select COALESCE(Sum(DEBIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'INVOE' And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As D_SAL
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$from_date' and tbl_transaction.DATE_OF_TRANSACTION <= '$to_date' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
-            $data['sal_return'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'SALRTN' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_RTN
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$from_date' and tbl_transaction.DATE_OF_TRANSACTION <= '$to_date' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
-            $data['dev_return'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'DRTN' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_RTN
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$from_date' and tbl_transaction.DATE_OF_TRANSACTION <= '$to_date' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
+            $data['sal_summary'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'SAL' THEN t.CREDIT ELSE 0 END), 0) AS T_SAL,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'INVOE' THEN t.DEBIT ELSE 0 END), 0) AS D_SAL
+                FROM (
+                    SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                    FROM tbl_transaction
+                    WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$from_date' AND DATE_OF_TRANSACTION <= '$to_date'
+                ) m
+                INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                    AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+                GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
+            $data['sal_return'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'SALRTN' THEN t.CREDIT ELSE 0 END), 0) AS T_RTN
+                FROM (
+                    SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                    FROM tbl_transaction
+                    WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$from_date' AND DATE_OF_TRANSACTION <= '$to_date'
+                ) m
+                INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                    AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+                GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
+            $data['dev_return'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'DRTN' THEN t.CREDIT ELSE 0 END), 0) AS T_RTN
+                FROM (
+                    SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                    FROM tbl_transaction
+                    WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$from_date' AND DATE_OF_TRANSACTION <= '$to_date'
+                ) m
+                INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                    AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+                GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
             $data['rtyp'] = "SALES";
         } else {
 
-            $data['sal_summary'] = $this->db->query("Select
-  			Year(tbl_transaction.DATE_OF_TRANSACTION) As YEAR,
-  			Month(tbl_transaction.DATE_OF_TRANSACTION) As MONTH,
-  			(Select COALESCE(Sum(tbl_transaction.CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'PAY' And
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As T_SAL,
-			(Select COALESCE(Sum(DEBIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME = 'PAYD' And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH) As D_SAL,
-				(Select COALESCE(Sum(CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME in ('CR','PV','BV') And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH and ACC_ID = 80) As O_SAL,
-				(Select COALESCE(Sum(CREDIT),0) From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 And tbl_transaction.BOOK_NAME in ('PV','BV') And 
-    			Year(tbl_transaction.DATE_OF_TRANSACTION) = YEAR And Month(tbl_transaction.DATE_OF_TRANSACTION) = MONTH and ACC_ID = 97) As B_SAL
-			From tbl_transaction Where tbl_transaction.DEL_FLAG = 1 and tbl_transaction.DATE_OF_TRANSACTION >='$from_date' and tbl_transaction.DATE_OF_TRANSACTION <= '$to_date' Group By Year(tbl_transaction.DATE_OF_TRANSACTION),
-			Month(tbl_transaction.DATE_OF_TRANSACTION) Order By YEAR, MONTH");
+            $data['sal_summary'] = $this->db->query("SELECT m.YEAR, m.MONTH,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'PAY' THEN t.CREDIT ELSE 0 END), 0) AS T_SAL,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME = 'PAYD' THEN t.DEBIT ELSE 0 END), 0) AS D_SAL,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME IN ('CR','PV','BV') AND t.ACC_ID = 80 THEN t.CREDIT ELSE 0 END), 0) AS O_SAL,
+                COALESCE(SUM(CASE WHEN t.BOOK_NAME IN ('PV','BV') AND t.ACC_ID = 97 THEN t.CREDIT ELSE 0 END), 0) AS B_SAL
+                FROM (
+                    SELECT DISTINCT YEAR(DATE_OF_TRANSACTION) AS YEAR, MONTH(DATE_OF_TRANSACTION) AS MONTH
+                    FROM tbl_transaction
+                    WHERE DEL_FLAG = 1 AND DATE_OF_TRANSACTION >= '$from_date' AND DATE_OF_TRANSACTION <= '$to_date'
+                ) m
+                INNER JOIN tbl_transaction t ON t.DEL_FLAG = 1
+                    AND YEAR(t.DATE_OF_TRANSACTION) = m.YEAR AND MONTH(t.DATE_OF_TRANSACTION) = m.MONTH
+                GROUP BY m.YEAR, m.MONTH ORDER BY m.YEAR, m.MONTH");
 
             $data['rtyp'] = "PAYMENT";
         }

@@ -45,9 +45,11 @@
                                 <td><?php echo $row->ACC_TYPE; ?></td>
                                 <td><?php
                                     $parnt_accid = $row->PARENT_ACC_ID;
-                                    $query = $this->db->query("SELECT ACC_NAME AS ACC_NAME FROM tbl_account WHERE ACC_ID=$parnt_accid");
-                                    $res = $query->row_array();
-                                    echo $parnt_accid = $res['ACC_NAME'];
+                                    if (!empty($parnt_accid)) {
+                                        $query = $this->db->query("SELECT ACC_NAME FROM tbl_account WHERE ACC_ID = ?", array($parnt_accid));
+                                        $res   = $query->row_array();
+                                        echo !empty($res['ACC_NAME']) ? $res['ACC_NAME'] : '';
+                                    }
                                     ?></td>
                                 <td><?php
                                     $opening_balance = $row->OPENING_BALANCE;

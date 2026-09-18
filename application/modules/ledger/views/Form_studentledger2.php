@@ -1,7 +1,4 @@
-<?php
-$con=mysql_connect('sdb-71.hosting.stackcp.net','root','');
-mysql_select_db('softloom_account',$con);
-?>
+<?php $CI =& get_instance(); ?>
  <div class="row">
         <div class="col-md-12" style="padding: 15px">
             <!-- start: GROUP PANEL -->
@@ -30,10 +27,9 @@ mysql_select_db('softloom_account',$con);
                                 <?php $sn_count = 1; foreach($stud_list->result()  as $row)
                                     {
 					                   $id=$row->STUDENT_ID;
-									   echo $selt="select sum(AMOUNT) as amt from tbl_payment'";
-									   $sq=mysql_query($selt);
-									   $rs=mysql_fetch_array($sq);
-									  echo  $paid_amt=$rs['amt'];
+									   $sq = $CI->db->select_sum('AMOUNT', 'amt')->where('STUDENT_ID', $id)->get('tbl_payment');
+									   $rs = $sq->row_array();
+									   $paid_amt = isset($rs['amt']) ? $rs['amt'] : 0;
 									   $tot_fee_amt=$row->FEE_AMOUNT;
 									   $balance_amount=$tot_fee_amt-$paid_amt; 
 									   
@@ -79,9 +75,8 @@ mysql_select_db('softloom_account',$con);
                                                  </thead>
                                              <tbody>
                                                 <?php
-                                               $sel1="select * from tbl_student where STUDENT_ID='$id'";
-												$query=mysql_query($sel1);
-												$r=mysql_fetch_array($query);
+												$query = $CI->db->get_where('tbl_student', array('STUDENT_ID' => $id));
+												$r = $query->row_array();
 												
 												
 													?>
@@ -96,9 +91,8 @@ mysql_select_db('softloom_account',$con);
                                               
                                                 <?php
 												$i=0;
-											 $sel="select tbl_payment.DATE,tbl_payment.PAY_NUMBER,tbl_payment.AMOUNT,tbl_student.FEE_AMOUNT from tbl_payment INNER JOIN tbl_student ON  tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID where tbl_student.STUDENT_ID='$id' ";
-												$sql=mysql_query($sel);
-												while($res=mysql_fetch_array($sql))
+												$sql = $CI->db->query("SELECT tbl_payment.DATE, tbl_payment.PAY_NUMBER, tbl_payment.AMOUNT, tbl_student.FEE_AMOUNT FROM tbl_payment INNER JOIN tbl_student ON tbl_student.STUDENT_ID = tbl_payment.STUDENT_ID WHERE tbl_student.STUDENT_ID = ?", array($id));
+												foreach ($sql->result_array() as $res)
 												{
 													$i++;
 													?>

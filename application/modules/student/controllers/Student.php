@@ -546,7 +546,10 @@ class Student extends MX_Controller {
     function mult_search() {
 //        $calc = $this->input->post('calc');
         $sess_array = $this->session->userdata('logged_in');
-        $company = $sess_array['comp_code'];
+        $company    = $this->input->post('company');
+        if ($company === NULL || $company === '') {
+            $company = (is_array($sess_array) && isset($sess_array['comp_code'])) ? $sess_array['comp_code'] : '';
+        }
         $dtype = $this->input->post('dat');
         $course = $this->input->post('course');
         $stat = $this->input->post('stat');

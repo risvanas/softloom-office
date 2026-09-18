@@ -126,7 +126,7 @@ class Menu_management extends MX_Controller {
         else {
             $user_id = $this->input->post('user_id');
             $result['status'] = 1;
-            $result['data'] = $this->menu_management_model->select_primary_menu('tbl_menu','', $user_id)->result();
+            $result['data'] = $this->menu_management_model->select_primary_menu('tbl_menu', $user_id)->result();
             foreach($result['data'] as $key=>$value) {
                 $value->sub_menu_cnt = intval($this->menu_management_model->sub_menu_count($value->menu_id)->row()->cnt);
             }
@@ -155,7 +155,7 @@ class Menu_management extends MX_Controller {
             $menu_id = $this->input->post('menu_id');
             $user_id = $this->input->post('user_id');
             $result['status'] = 1;
-            $menu = $this->menu_management_model->select_primary_menu('tbl_menu',$menu_id, $user_id)->result();
+            $menu = $this->menu_management_model->select_primary_menu('tbl_menu', $user_id, $menu_id)->result();
             foreach ($menu as $key => $value) {
                 foreach ($value as $key1 => $value1) {
                     $result[$key1] = $value1;
