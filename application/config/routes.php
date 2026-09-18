@@ -27,11 +27,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 | There are three reserved routes:
 |
-|	$route['default_controller'] = 'welcome';
+|	$route['default_controller'] = 'login';
 |
-| This route indicates which controller class should be loaded if the
-| URI contains no data. In the above example, the "welcome" class
-| would be loaded.
+| This route indicates which controller class should be loaded when the
+| base URL is requested (e.g. http://yoursite.com/). Set to 'login' so
+| the login page is shown by default.
 |
 |	$route['404_override'] = 'errors/page_missing';
 |
@@ -49,6 +49,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+// Base URL (/) loads the login page (module: login, controller: Login, method: index)
 $route['default_controller'] = 'login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

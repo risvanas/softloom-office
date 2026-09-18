@@ -109,14 +109,17 @@ class Feecollection extends MX_Controller
                     'ACC_YEAR_CODE' => $year_code,
                     'DEL_FLAG'      => 1,
                     'INVOICE_TYPE'  => $invoice_type,
-                    'COMPANY'       => $company_code
+                    'COMPANY'       => $company_code,
+                    'BOOK_NAME'     => 'PAY',
                 ])
                 ->get()
                 ->row_array();
 
+            $book_num = $paymentData['BOOK_NUMBER'] ?? ($start_number + 1);
+
             $pay_data = array(
                 'PAY_NUMBER' => $pay_num,
-                'BOOK_NUMBER' => $paymentData['BOOK_NUMBER'] ?? $start_number + 1,
+                'BOOK_NUMBER' => $book_num,
                 'INVOICE_TYPE' => $invoice_type,
                 'STUDENT_ID' => $name,
                 'DEL_FLAG' => 1,
@@ -147,13 +150,7 @@ class Feecollection extends MX_Controller
             $this->fee_model->trans_ins('tbl_payment', $pay_data);
             $pay_id = $this->db->insert_id();
 
-            $query = $this->db->query("SELECT IFNULL(MAX(BOOK_NUMBER), 100)+1 AS BOOK_NUMBER
-                    FROM tbl_transaction WHERE BOOK_NAME='PAY' and COMPANY='$company_code' and  ACC_YEAR_CODE=$year_code and DEL_FLAG=1");
-
-            $row = $query->row_array();
-
             if ($trans_type == "cash") {
-                $book_num = $row['BOOK_NUMBER'];
                 $remarks = "Cash from" . " " . $stud_name . " " . "(Course Fee)";
                 $ceredt_data = array(
                     'FIN_YEAR_ID' => 2,
@@ -203,7 +200,6 @@ class Feecollection extends MX_Controller
             }
 
             if ($trans_type == "bank") {
-                $book_num = $row['BOOK_NUMBER'];
                 //$query=$this->db->query("SELECT ACC_ID FROM tbl_account where ACC_CODE=$bank");  
                 //$row = $query->row_array();
                 //$bank_accid=$row['ACC_ID'];
@@ -347,7 +343,6 @@ class Feecollection extends MX_Controller
         $pay_id = $this->input->post('txt_pay_id');
         $pay_number = $this->input->post('txt_pay_number');
         $stud_name = $this->input->post('txt_stud_name');
-        //$pay_date=$this->input->post('txt_payment_date');
         $pay_date = strtotime($pay_date);
         $pay_date = date("Y-m-d", $pay_date);
         $hdd_due_date = $this->input->post('hdd_due_date');
@@ -380,18 +375,34 @@ class Feecollection extends MX_Controller
             $this->load->library('../controllers/lockdate');
             $location_details = $this->lockdate->location_details();
             $modified_on = gmdate("Y-m-d H:i:s");
-            $sess_array = $this->session->userdata('logged_in');
             $company_code = $sess_array['comp_code'];
-            $query2 = $this->db->query("select ACC_YEAR_CODE from tbl_transaction where BOOK_NUMBER=$book_num AND BOOK_NAME='PAY' AND DEL_FLAG=1 and COMPANY='$company_code'");
-            $val2 = $query2->row_array();
-            $acc_year = $val2['ACC_YEAR_CODE'];
+
+            $existing_payment = $this->db->select('BOOK_NUMBER, INVOICE_TYPE, ACC_YEAR_CODE')
+                ->from('tbl_payment')
+                ->where('PAY_ID', $pay_id)
+                ->where('TYPE', 'STD')
+                ->get()
+                ->row_array();
+
+            if (empty($existing_payment)) {
+                redirect('feecollection');
+                return;
+            }
+
+            $book_num = $book_num ?: $existing_payment['BOOK_NUMBER'];
+            $invoice_type = $existing_payment['INVOICE_TYPE'];
+            $acc_year = $existing_payment['ACC_YEAR_CODE'];
+
             if ($year_code == $acc_year) {
 
-                // Calculate GST based on invoice type
-                if ($this->input->post('txt_invoice_type') == 'with_tax') {
+                $sgst_percent = 9;
+                $cgst_percent = 9;
+                $sgst_amt = 0;
+                $cgst_amt = 0;
+                $sub_total_amt = $amt;
 
-                    $sgst_percent = 9;
-                    $cgst_percent = 9;
+                // Calculate GST based on invoice type
+                if ($invoice_type == 'with_tax') {
 
                     $total_tax_percent = ($sgst_percent + $cgst_percent) / 100;
                     $base_amount = $amt / (1 + $total_tax_percent);
@@ -400,15 +411,13 @@ class Feecollection extends MX_Controller
                     $cgst_amt = $base_amount * ($cgst_percent / 100);
 
                     $sub_total_amt = $base_amount;
-                } else {
-                    $sgst_amt = 0;
-                    $cgst_amt = 0;
-                    $sub_total_amt = $amt;
                 }
 
                 $this->db->query("update tbl_payment set DEL_FLAG=0 where TYPE='STD' AND PAY_ID=" . $pay_id . " and COMPANY='$company_code'");
                 $pay_update = array(
                     'PAY_NUMBER' => $pay_number,
+                    'BOOK_NUMBER' => $book_num,
+                    'INVOICE_TYPE' => $invoice_type,
                     'STUDENT_ID' => $stud_id,
                     'DEL_FLAG' => 1,
                     'AMOUNT' => $amt,
@@ -443,6 +452,7 @@ class Feecollection extends MX_Controller
                     $remarks = "Cash from" . " " . $stud_name . " " . "(Course Fee)";
                     $ceredt_data = array(
                         'FIN_YEAR_ID' => 2,
+                        'INVOICE_TYPE' => $invoice_type,
                         'ACC_ID' => 38,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'CREDIT' => $amt,
@@ -458,11 +468,13 @@ class Feecollection extends MX_Controller
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details
+                        'LOCATION_DETAILS' => $location_details,
+                        'TRANSACTION_DATE' => $entry_date
                     );
 
                     $debit_data = array(
                         'FIN_YEAR_ID' => 2,
+                        'INVOICE_TYPE' => $invoice_type,
                         'ACC_ID' => 39,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'DEBIT' => $amt,
@@ -472,13 +484,13 @@ class Feecollection extends MX_Controller
                         'BOOK_NUMBER' => $book_num,
                         'BOOK_NAME' => 'PAY',
                         'SRC_ID' => $stud_id,
-                        'SUB_ACC' => $course,
                         'PAYMENT_ID' => $ins_pay_id,
                         'ACC_YEAR_CODE' => $year_code,
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details
+                        'LOCATION_DETAILS' => $location_details,
+                        'TRANSACTION_DATE' => $entry_date
                     );
                     $this->fee_model->trans_ins('tbl_transaction', $ceredt_data);
                     $this->fee_model->trans_ins('tbl_transaction', $debit_data);
@@ -492,6 +504,7 @@ class Feecollection extends MX_Controller
                     $remarks = $stud_name . " " . "(Course Fee) " . $chq_no;
                     $ceredt_data = array(
                         'FIN_YEAR_ID' => 2,
+                        'INVOICE_TYPE' => $invoice_type,
                         'ACC_ID' => 38,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'CREDIT' => $amt,
@@ -507,11 +520,13 @@ class Feecollection extends MX_Controller
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details
+                        'LOCATION_DETAILS' => $location_details,
+                        'TRANSACTION_DATE' => $entry_date
                     );
 
                     $debit_data = array(
                         'FIN_YEAR_ID' => 2,
+                        'INVOICE_TYPE' => $invoice_type,
                         'ACC_ID' => $bank,
                         'DATE_OF_TRANSACTION' => $pay_date,
                         'DEBIT' => $amt,
@@ -521,13 +536,13 @@ class Feecollection extends MX_Controller
                         'BOOK_NUMBER' => $book_num,
                         'BOOK_NAME' => 'PAY',
                         'SRC_ID' => $stud_id,
-                        'SUB_ACC' => $course,
                         'PAYMENT_ID' => $ins_pay_id,
                         'ACC_YEAR_CODE' => $year_code,
                         'COMPANY' => $company_code,
                         'MODIFIED_BY' => $modified_by,
                         'MODIFIED_ON' => $modified_on,
-                        'LOCATION_DETAILS' => $location_details
+                        'LOCATION_DETAILS' => $location_details,
+                        'TRANSACTION_DATE' => $entry_date
                     );
                     $this->fee_model->trans_ins('tbl_transaction', $ceredt_data);
                     $this->fee_model->trans_ins('tbl_transaction', $debit_data);
@@ -585,7 +600,9 @@ class Feecollection extends MX_Controller
         if ($message_display == '') {
             $message_display = 'Accounting Year Do not Match';
         }
-        if ($year_code == $acc_year && $check_status == 'false') {
+        $is_latest = is_latest_payment_book_number($id);
+
+        if ($year_code == $acc_year && $check_status == 'false' && $is_latest) {
             $sess_array = $this->session->userdata('logged_in');
             $deleted_by = $sess_array['user_id'];
             $this->load->library('../controllers/lockdate');
@@ -605,18 +622,20 @@ class Feecollection extends MX_Controller
             $data['s'] = $this->fee_model->select_acc_type('tbl_account');
             $data['msg'] = 'Delete successfully';
             $data['errmsg'] = "";
-            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-            //            render_template($layout);
+            $this->session->set_flashdata('msg', $data['msg']);
+            $this->session->set_flashdata('errmsg', $data['errmsg']);
             redirect('feecollection');
         } else {
+            if ($year_code == $acc_year && $check_status == 'false' && !$is_latest) {
+                $message_display = 'Only the latest payment record can be deleted';
+            }
             $data['parent_account'] = $this->fee_model->selectAll('tbl_account');
             $data['r'] = $this->fee_model->select_st_name('tbl_student');
             $data['s'] = $this->fee_model->select_acc_type('tbl_account');
             $data['msg'] = '';
             $data['errmsg'] = $message_display;
-            //            $layout = array('page' => 'form_fee_collection', 'title' => 'Feecollection', 'data' => $data);
-            //            render_template($layout);
-            //            return FALSE;
+            $this->session->set_flashdata('msg', $data['msg']);
+            $this->session->set_flashdata('errmsg', $data['errmsg']);
             redirect('feecollection');
         }
     }

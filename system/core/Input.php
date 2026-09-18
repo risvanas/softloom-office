@@ -679,12 +679,10 @@ class CI_Input {
 			return $new_array;
 		}
 
-		/* We strip slashes if magic quotes is on to keep things consistent
-
-		   NOTE: In PHP 5.4 get_magic_quotes_gpc() will always return 0 and
-			 it will probably not exist in future versions at all.
+		/* We strip slashes if magic quotes is on to keep things consistent.
+		   get_magic_quotes_gpc() was removed in PHP 8.0.
 		*/
-		if ( ! is_php('5.4') && get_magic_quotes_gpc())
+		if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
 		{
 			$str = stripslashes($str);
 		}

@@ -65,7 +65,7 @@
                             <div class="row"> 
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label class="control-label"> Icon <span class="symbol required"></span> </label>
+                                        <label class="control-label"> Icon </label>
                                         <input autocomplete="off" type="text" class="form-control" id="txt_icon" name="txt_icon"  value=""/>
 
                                     </div>

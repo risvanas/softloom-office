@@ -71,7 +71,7 @@ class Invoice extends MX_Controller {
             }
             if ($temp_inv_added == 1) {
                 $temp_inv_details = $this->invoice_model->select_temp_inv_details($temp_inv_no, $year_code, $company)->row();
-                if($temp_inv_details->CUSTOMER_ID != $cut_id) {
+                if($temp_inv_details && $temp_inv_details->CUSTOMER_ID != $cut_id) {
                     $data['sub_acc_list'] = $this->invoice_model->select_sub_acc('tbl_account');
                     $data['cust'] = $this->invoice_model->select_customer('tbl_account');
                     $data['description'] = $this->invoice_model->select_description();

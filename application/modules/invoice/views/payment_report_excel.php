@@ -45,7 +45,7 @@
                 <th>Number</th>
                 <th>Date</th>
                 <th>Name</th>
-                <th>Invoice Type</th>
+                <!-- <th>Invoice Type</th> -->
                 <th>Amount</th>
                 <th>Tax Amount</th>
                 <th>Total Amount</th>
@@ -64,7 +64,9 @@
                     <td>PAY<?php echo format_book_number($row->BOOK_NUMBER) . "/" . $from_date . "-" . $to_date; ?></td>
                     <td><?php echo date("d-m-Y", strtotime($row->PAYMENT_DATE)); ?></td>
                     <td><?php echo $row->NAME; ?></td>
-                    <td><?php echo ucwords(strtolower(str_replace('_', ' ', $row->INVOICE_TYPE))); ?></td>
+                    <!-- <td>
+                        <?php /*echo ucwords(strtolower(str_replace('_', ' ', $row->INVOICE_TYPE))); */?>
+                    </td> -->
                     <td>
                         <?php echo $row->SUB_TOTAL_PRICE;
                         $sub_total +=  $row->SUB_TOTAL_PRICE; ?>
@@ -82,10 +84,10 @@
             }
             ?>
             <tr>
-                <td colspan="4" style="text-align: right;">Total</td>
-                <td><?php echo $sub_total ?></td>
-                <td><?php echo $gst_amt ?></td>
-                <td><?php echo $tot_amt ?></td>
+                <td colspan="3" style="text-align: right;">Total</td>
+                <td><?php echo format_currency($sub_total); ?></td>
+                <td><?php echo format_currency($gst_amt); ?></td>
+                <td><?php echo format_currency($tot_amt); ?></td>
             </tr>
         </tbody>
     </table>

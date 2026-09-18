@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 define('DOMPDF_ENABLE_AUTOLOAD', false);
 require_once("./vendor/dompdf/dompdf/autoload.inc.php");
-use Dompdf\Dompdf; 
+use Dompdf\Dompdf;
 class Pdfgenerator {
   public function generate($html, $filename='', $stream=TRUE, $paper = 'A4', $orientation = "portrait")
   {

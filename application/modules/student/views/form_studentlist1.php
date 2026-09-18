@@ -172,12 +172,12 @@ data-backdrop="static" data-keyboard="false" style="display: none;">
                         <div class="col-md-3"> Status
                           <select name="sel_status" class="form-control">
                             <?php
-			 $sel="select * from tbl_status";
-			 $sql=mysql_query($sel);
-			 while($res=mysql_fetch_array($sql))
-			 {
+			 $ci =& get_instance();
+			 $ci->load->database();
+			 $q = $ci->db->query("SELECT * FROM tbl_status");
+			 foreach ($q->result_array() as $res) {
 				 ?>
-                            <option value="<?php echo $res['status']; ?>" <?php if($res['status']==$stat) echo "selected"; ?>><?php echo $res['status']; ?></option>
+                            <option value="<?php echo htmlspecialchars($res['status']); ?>" <?php if (isset($res['status']) && $res['status'] == $stat) echo 'selected'; ?>><?php echo htmlspecialchars($res['status']); ?></option>
                             <?php
 			 }
 			 ?>

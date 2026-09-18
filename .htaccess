@@ -1,3 +1,6 @@
+# Prefer CodeIgniter front controller; otherwise Apache may serve stale index.html for "/".
+DirectoryIndex index.php
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /

@@ -269,6 +269,7 @@ class Invoice_model extends CI_Model {
         $this->db->join('tbl_accounting_year', 'tbl_accounting_year.AY_ID=tbl_payment.ACC_YEAR_CODE','left');
         $this->db->join('tbl_student', 'tbl_payment.STUDENT_ID=tbl_student.STUDENT_ID','left');
         $this->db->where('tbl_payment.DEL_FLAG =1');
+        $this->db->where('tbl_payment.TYPE ="STD"');
         if ($invoice_type != "") {
             $this->db->where("tbl_payment.INVOICE_TYPE", $invoice_type);
         }
@@ -281,8 +282,8 @@ class Invoice_model extends CI_Model {
             $this->db->where("(tbl_payment.PAY_NUMBER LIKE '%$key_words%' OR tbl_student.NAME LIKE '%$key_words%' OR tbl_payment.REMARKS LIKE '%$key_words%' OR tbl_student.CONTACT_NO LIKE '%$key_words%' OR tbl_student.STUD_EMAIL LIKE '%$key_words%')");
         }
 
-        $this->db->order_by("tbl_payment.ENTRY_DATE", "desc");
-        $this->db->order_by("tbl_payment.PAY_NUMBER", "desc");
+        // $this->db->order_by("tbl_payment.PAYMENT_DATE", "desc");
+        $this->db->order_by("tbl_payment.BOOK_NUMBER", "desc");
 
         $result = $this->db->get();
         return $result;

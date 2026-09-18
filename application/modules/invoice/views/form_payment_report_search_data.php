@@ -45,9 +45,9 @@
       ?>
       <tr>
         <td colspan="4" style="text-align: right;">Total</td>
-        <td><?php echo $sub_total ?></td>
-        <td><?php echo $gst_amt ?></td>
-        <td><?php echo $tot_amt ?></td>
+        <td><?php echo format_currency($sub_total); ?></td>
+        <td><?php echo format_currency($gst_amt); ?></td>
+        <td><?php echo format_currency($tot_amt); ?></td>
       </tr>
     </tbody>
   </table>

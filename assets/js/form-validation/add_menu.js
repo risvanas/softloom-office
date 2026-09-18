@@ -29,12 +29,19 @@ var FormValidator = function () {
                 txt_sub_menu: {
                     required: true
                 },
+                txt_url: {
+                    required: true
+                },
 				txt_source: {
 					required: true
 				},
 				txt_order: {
-					 number: true
-				}
+					 number: true,
+                     required: true
+				},
+                drp_mobile_view: {
+                    required: true
+                }
             },
             messages: {
 				required : "This field is required.",

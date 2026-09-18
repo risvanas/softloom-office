@@ -41,3 +41,48 @@ if (!function_exists('format_book_number')) {
         return str_pad($number, $length, '0', STR_PAD_LEFT);
     }
 }
+
+if (!function_exists('format_currency')) {
+    function format_currency($amount)
+    {
+        return number_format(round((float) $amount, 2), 2, '.', ',');
+    }
+}
+
+if (!function_exists('is_latest_payment_book_number')) {
+    function is_latest_payment_book_number($payment_id)
+    {
+        $CI =& get_instance();
+        $sess = $CI->session->userdata('logged_in');
+        $year_code = $sess['accounting_year'];
+        $company_code = $sess['comp_code'];
+
+        $row = $CI->db->select('BOOK_NUMBER, INVOICE_TYPE')
+            ->from('tbl_transaction')
+            ->where([
+                'PAYMENT_ID' => $payment_id,
+                'BOOK_NAME'    => 'PAY',
+                'DEL_FLAG'     => 1,
+                'COMPANY'      => $company_code,
+            ])
+            ->get()
+            ->row_array();
+
+        if (!$row) {
+            return false;
+        }
+
+        $max = $CI->db->select_max('BOOK_NUMBER')
+            ->where([
+                'ACC_YEAR_CODE' => $year_code,
+                'DEL_FLAG'      => 1,
+                'INVOICE_TYPE'  => $row['INVOICE_TYPE'],
+                'COMPANY'       => $company_code,
+                'BOOK_NAME'     => 'PAY',
+            ])
+            ->get('tbl_transaction')
+            ->row('BOOK_NUMBER');
+
+        return $max !== null && (int) $row['BOOK_NUMBER'] === (int) $max;
+    }
+}
