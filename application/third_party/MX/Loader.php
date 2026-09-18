@@ -148,44 +148,41 @@ class MX_Loader extends CI_Loader
 	}
 	
 	/** Load a module library **/
-	public function library($library, $params = NULL, $object_name = NULL)
+	public function library($library, $params = NULL, $object_name = NULL) 
 	{
-		if (is_array($library)) return $this->libraries($library);
-
+		if (is_array($library)) return $this->libraries($library);		
+		
 		$class = strtolower(basename($library));
 
-		if (isset($this->_ci_classes[$class]) && $_alias = $this->_ci_classes[$class]) {
+		if (isset($this->_ci_classes[$class]) && $_alias = $this->_ci_classes[$class])
 			return $this;
-		}
-
-		// ✅ Fixed strtolower() call
-		if (is_string($object_name) && $object_name !== '') {
-			$_alias = strtolower($object_name);
-		} else {
-			$_alias = $class;
-		}
-
+			
+		($_alias = strtolower($object_name)) OR $_alias = $class;
+		
 		list($path, $_library) = Modules::find($library, $this->_module, 'libraries/');
-
+		
 		/* load library config file as params */
-		if ($params == NULL) {
-			list($path2, $file) = Modules::find($_alias, $this->_module, 'config/');
+		if ($params == NULL) 
+		{
+			list($path2, $file) = Modules::find($_alias, $this->_module, 'config/');	
 			($path2) && $params = Modules::load_file($file, $path2, 'config');
-		}
-
-		if ($path === FALSE) {
+		}	
+		
+		if ($path === FALSE) 
+		{
 			$this->_ci_load_library($library, $params, $object_name);
-		} else {
+		} 
+		else 
+		{
 			Modules::load_file($_library, $path);
-
+			
 			$library = ucfirst($_library);
 			CI::$APP->$_alias = new $library($params);
-
+			
 			$this->_ci_classes[$class] = $_alias;
 		}
-
 		return $this;
-	}
+    }
 
 	/** Load an array of libraries **/
 	public function libraries($libraries) 

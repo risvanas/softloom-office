@@ -24,16 +24,6 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="control-label">Invoice Type<span class="symbol required"> </span></label>
-                                        <select class="form-control" id="invoice_type" name="invoice_type" onchange="show_gst(this); update_gst()">
-                                            <option value="">Select</option>
-                                            <option value="with_tax">With Tax</option>
-                                            <option value="without_tax">Without Tax</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
                                         <label class="control-label"> Course</label>
                                         <select class="form-control" id="txt_course" name="txt_course"  onchange="load_stud_names();load_stud_details();">
                                             <option value="">Select course </option>
@@ -47,9 +37,7 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-10">
+                                <div class="col-md-8">
                                     <div class="form-group" id="h1">
                                         <label class="control-label"> Name</label>
                                         <select class="form-control" id="txt_stud_name" name="txt_stud_name" onchange="load_stud_details()">
@@ -57,8 +45,6 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Payment Date <span class="symbol required"> </span></label>

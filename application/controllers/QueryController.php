@@ -13,7 +13,7 @@ class QueryController extends MX_Controller
 
     function index()
     {
-        $this->updateBookNumber();
+        // $this->updateBookNumber();
     }
 
     public function updateBookNumber()

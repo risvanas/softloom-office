@@ -1,6 +1,6 @@
 <?php
-$ci =& get_instance();
-$ci->load->database();
+$con=mysql_connect('sdb-71.hosting.stackcp.net','root','');
+mysql_select_db('softloom_account',$con);
 ?>
 <table class="table table-striped table-bordered table-hover table-full-width" id="sample_1">
        <thead>
@@ -21,10 +21,10 @@ foreach($cond->result() as $row)
 	$CONTACT_NUMBER = $row->CONTACT_NO;
 	$COURSE_FEE=$row->FEE_AMOUNT;
 	
-	$sel = "SELECT SUM(AMOUNT) AS amt FROM tbl_payment WHERE STUDENT_ID = ?";
-	$q = $ci->db->query($sel, array($id));
-	$res = $q->row_array();
-	$PAID_AMOUNT = $res ? (float) $res['amt'] : 0;
+	$sel="select sum(AMOUNT) as amt from tbl_payment where STUDENT_ID='$id'";
+	$sql=mysql_query($sel);
+	$res=mysql_fetch_array($sql);
+	$PAID_AMOUNT= $res['amt'];
 	$bl_amt=$COURSE_FEE-$PAID_AMOUNT;
 ?>
      <tr>

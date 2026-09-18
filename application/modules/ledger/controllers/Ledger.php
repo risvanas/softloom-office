@@ -109,6 +109,7 @@ class Ledger extends MX_Controller {
         $book_num = $this->uri->segment(3);
         $book_name = $this->uri->segment(4);
         $year_code = $this->uri->segment(5);
+        $invoice_type = $this->uri->segment(6);
         $sess_array = $this->session->userdata('logged_in');
         $company = $sess_array['comp_code'];
         $data['company'] = $this->finance_model->select_company(2);
@@ -135,8 +136,11 @@ class Ledger extends MX_Controller {
 //            $layout = array('page' => 'form_customer_details', 'title' => 'Finance', 'data' => $data);
 //            render_template($layout);
         } elseif ($book_name == 'PAY') {
-//            $data['fee_details'] = $this->db->query("select tbl_student.NAME as name,tbl_student.COURSE as course,tbl_payment.*,tbl_account.ACC_NAME as acc_name,tbl_user.FIRST_NAME as n1,tbl_user.LAST_NAME as n2,modified.FIRST_NAME as name1,modified.LAST_NAME as name2 from tbl_payment join tbl_student on tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID join tbl_account on tbl_student.course = tbl_account.ACC_ID left join tbl_user on tbl_payment.CREATED_BY = tbl_user.USER_ID left join tbl_user as modified on tbl_payment.MODIFIED_BY=modified.USER_ID where tbl_payment.PAY_NUMBER=$book_num and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD'");
-            $data['fee_details'] = $this->db->query("select tbl_student.NAME as name,tbl_student.STUDENT_ID, tbl_student.FEE_AMOUNT, tbl_student.COURSE as course, tbl_student.ADDRESS1, tbl_student.ADDRESS2, tbl_student.ADDRESS3,tbl_student.CONTACT_NO, tbl_transaction.*, tbl_payment.TRANSACTION_TYPE, tbl_payment.DUE_DATE, tbl_payment.CHEQUE_NUMBER, tbl_payment.CHEQUE_DATE, tbl_payment.PAYMENT_TYPE, tbl_payment.INVOICE_TYPE, tbl_payment.SUB_TOTAL_PRICE, tbl_payment.SGST_PERCENT, tbl_payment.CGST_PERCENT, tbl_payment.SGST_AMOUNT, tbl_payment.CGST_AMOUNT, tbl_payment.ROUND_OFF, tbl_account.ACC_NAME as course_name from tbl_payment join tbl_student on tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID join tbl_account on tbl_student.course = tbl_account.ACC_ID left join tbl_transaction on tbl_payment.PAY_ID=tbl_transaction.PAYMENT_ID where tbl_payment.PAY_NUMBER=$book_num and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD' and tbl_transaction.BOOK_NAME='PAY' and CREDIT IS NOT NULL  AND tbl_transaction.COMPANY=$company AND tbl_transaction.ACC_YEAR_CODE=$year_code");
+            $invoice_filter = '';
+            if ($invoice_type != '') {
+                $invoice_filter = ' AND tbl_payment.INVOICE_TYPE=' . $this->db->escape($invoice_type);
+            }
+            $data['fee_details'] = $this->db->query("select tbl_student.NAME as name,tbl_student.STUDENT_ID, tbl_student.FEE_AMOUNT, tbl_student.COURSE as course, tbl_student.ADDRESS1, tbl_student.ADDRESS2, tbl_student.ADDRESS3,tbl_student.CONTACT_NO, tbl_transaction.*, tbl_payment.TRANSACTION_TYPE, tbl_payment.DUE_DATE, tbl_payment.CHEQUE_NUMBER, tbl_payment.CHEQUE_DATE, tbl_payment.PAYMENT_TYPE, tbl_payment.INVOICE_TYPE, tbl_payment.SUB_TOTAL_PRICE, tbl_payment.SGST_PERCENT, tbl_payment.CGST_PERCENT, tbl_payment.SGST_AMOUNT, tbl_payment.CGST_AMOUNT, tbl_payment.ROUND_OFF, tbl_account.ACC_NAME as course_name from tbl_payment join tbl_student on tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID join tbl_account on tbl_student.course = tbl_account.ACC_ID left join tbl_transaction on tbl_payment.PAY_ID=tbl_transaction.PAYMENT_ID where tbl_payment.BOOK_NUMBER=$book_num and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD' and tbl_transaction.BOOK_NAME='PAY' and tbl_transaction.BOOK_NUMBER=$book_num and CREDIT IS NOT NULL AND tbl_transaction.COMPANY=$company AND tbl_transaction.ACC_YEAR_CODE=$year_code" . $invoice_filter);
             $data['msg'] = '';
             $data['errmsg'] = '';
 //            $comp = $this->db->query("SELECT COMPANY FROM tbl_payment where tbl_payment.PAY_NUMBER=$book_num and tbl_payment.DEL_FLAG=1 and tbl_payment.TYPE='STD' and tbl_payment.ACC_YEAR_CODE=$year_code");

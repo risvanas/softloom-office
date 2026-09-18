@@ -109,6 +109,19 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label"> Payment Type</label>
+                                        <select class="form-control"  id="txt_payment_type" name="txt_payment_type">
+                                            <option value="single" <?php
+                                                if ($row->PAYMENT_TYPE == "single") {
+                                                    ?> selected="selected"<?php } ?>>Single</option>
+                                            <option value="installment" <?php
+                                                if ($row->PAYMENT_TYPE == "installment") {
+                                                    ?> selected="selected"<?php } ?>>Installment</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 </div>
 
                                 <div class="row">

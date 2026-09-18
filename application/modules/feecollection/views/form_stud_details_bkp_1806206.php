@@ -64,7 +64,7 @@ foreach ($rs->result() as $row) {
                     <td>
                         <?php
                         if($row->BOOK_NAME == "PAY"){ ?>
-                            <a href="<?php echo site_url('ledger/view_details/' . $row->BOOK_NUMBER . '/' . $row->BOOK_NAME . '/' . $row->ACC_YEAR_CODE . '/' . $row->INVOICE_TYPE); ?>" target="_blank"><?php echo $row->BOOK_NAME . $row->BOOK_NUMBER?></a> 
+                            <a href="<?php echo site_url('ledger/view_details') . '/' . $row->BOOK_NUMBER . '/' . $row->BOOK_NAME . '/' . $row->ACC_YEAR_CODE; ?> " target="_blank"><?php echo $row->BOOK_NAME . $row->BOOK_NUMBER?></a> 
                         <?php } else { 
                             echo $row->BOOK_NAME . $row->BOOK_NUMBER; 
                         } ?>

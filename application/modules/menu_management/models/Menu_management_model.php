@@ -39,7 +39,7 @@ class Menu_management_model extends CI_Model {
         return $query;
     }
     
-    function select_primary_menu($table, $userid, $menu_id = '') {
+    function select_primary_menu($table, $menu_id= '', $userid) {
         $base_url = site_url();
         // $this->db->select("menu_id, sub_menu, IF(menu_reference IS NULL or menu_reference = '', '', menu_reference) AS menu_reference, source, menu_order, menu_show_on_mobile, IF(menu_icon_image IS NULL or menu_icon_image = '', '', menu_icon_image) AS menu_icon_image, IF(URL IS NULL or URL = '', '', CONCAT('$base_url' , '/',URL)) AS menu_url, IF(menu_type IS NULL or menu_type = '', '', menu_type) AS menu_type", false);
         // $this->db->from($table);

@@ -21,16 +21,37 @@ class Session {
 	}
 
 	/**
-	 * Regenerates session id (PHP 7.1+ compatible).
-	 * Cannot change session_id() when a session is active, so use session_regenerate_id(true)
-	 * which assigns a new ID and deletes the old session file while keeping $_SESSION data.
-	 */
+    * Regenerates session id
+    */
 	function regenerate_id()
 	{
-		if (session_status() === PHP_SESSION_ACTIVE) {
-			session_regenerate_id(true);
-			$_SESSION['regenerated'] = time();
-		}
+		// copy old session data, including its id
+		$old_session_id = session_id();
+		$old_session_data = $_SESSION;
+
+		// regenerate session id and store it
+		session_regenerate_id();
+		$new_session_id = session_id();
+
+		// switch to the old session and destroy its storage
+		session_id($old_session_id);
+		session_destroy();
+
+		// switch back to the new session id and send the cookie
+		session_id($new_session_id);
+		session_start();
+
+		// restore the old session data into the new session
+		$_SESSION = $old_session_data;
+
+		// update the session creation time
+		$_SESSION['regenerated'] = time();
+
+		// session_write_close() patch based on this thread
+		// http://www.codeigniter.com/forums/viewthread/1624/
+		// there is a question mark ?? as to side affects
+
+		// end the current session and store session data.
 		session_write_close();
 	}
 

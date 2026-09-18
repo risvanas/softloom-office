@@ -8,7 +8,7 @@
             body{
                 font-size: 10px;
                 width: 100%;
-                position: relative;
+                position: relative;`
                 /*font-family: sans-serif;*/
             }
             @page {
@@ -401,40 +401,41 @@
                     </table>
                 </div>
                 <?php
-                    $str = array();
-                    $hundred = null;
-                    $words = array(0 => '', 1 => 'one', 2 => 'two',
-                        3 => 'three', 4 => 'four', 5 => 'five', 6 => 'six',
-                        7 => 'seven', 8 => 'eight', 9 => 'nine',
-                        10 => 'ten', 11 => 'eleven', 12 => 'twelve',
-                        13 => 'thirteen', 14 => 'fourteen', 15 => 'fifteen',
-                        16 => 'sixteen', 17 => 'seventeen', 18 => 'eighteen',
-                        19 => 'nineteen', 20 => 'twenty', 30 => 'thirty',
-                        40 => 'forty', 50 => 'fifty', 60 => 'sixty',
-                        70 => 'seventy', 80 => 'eighty', 90 => 'ninety');
-                    $digits = array('', 'hundred', 'thousand', 'lakh', 'crore');
-                    $digits_length = strlen($total_price);
-                    $decimal = round($total_price - ($no = floor($total_price)), 2) * 100;
-                    $i = 0;
-                    while ($i < $digits_length) {
-                        $divider = ($i == 2) ? 10 : 100;
-                        $tot_amt = floor($no % $divider);
-                        $no = floor($no / $divider);
-                        $i += $divider == 10 ? 1 : 2;
-                        if ($tot_amt) {
-                            $plural = (($counter = count($str)) && $tot_amt > 9) ? 's' : null;
-                            $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
-                            $str [] = ($tot_amt < 21) ? $words[$tot_amt] . ' ' . $digits[$counter] . $plural . ' ' . $hundred : $words[floor($tot_amt / 10) * 10] . ' ' . $words[$tot_amt % 10] . ' ' . $digits[$counter] . $plural . ' ' . $hundred;
-                        } else
-                            $str[] = null;
-                    }
-                    $Rupees = implode('', array_reverse($str));
-                    $paise = ($decimal) ? "and " . ($words[floor($decimal / 10) * 10] . " " . $words[$decimal % 10]) . ' Paise' : '';
-                    $return = ($Rupees ? $Rupees : '');
-                    $return .= ($paise ? $paise : "") . " Only";
-                    echo 'Amount Chargeable (in words) : ' ;
-                    echo "<b>" . ucwords($return) . "</b>";
-                }
+            }
+            $str = array();
+            $hundred = null;
+            $words = array(0 => '', 1 => 'one', 2 => 'two',
+                3 => 'three', 4 => 'four', 5 => 'five', 6 => 'six',
+                7 => 'seven', 8 => 'eight', 9 => 'nine',
+                10 => 'ten', 11 => 'eleven', 12 => 'twelve',
+                13 => 'thirteen', 14 => 'fourteen', 15 => 'fifteen',
+                16 => 'sixteen', 17 => 'seventeen', 18 => 'eighteen',
+                19 => 'nineteen', 20 => 'twenty', 30 => 'thirty',
+                40 => 'forty', 50 => 'fifty', 60 => 'sixty',
+                70 => 'seventy', 80 => 'eighty', 90 => 'ninety');
+            $digits = array('', 'hundred', 'thousand', 'lakh', 'crore');
+            $digits_length = strlen($total_price);
+            $decimal = round($total_price - ($no = floor($total_price)), 2) * 100;
+            $i = 0;
+            while ($i < $digits_length) {
+                $divider = ($i == 2) ? 10 : 100;
+                $tot_amt = floor($no % $divider);
+                $no = floor($no / $divider);
+                $i += $divider == 10 ? 1 : 2;
+                if ($tot_amt) {
+                    $plural = (($counter = count($str)) && $tot_amt > 9) ? 's' : null;
+                    $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
+                    $str [] = ($tot_amt < 21) ? $words[$tot_amt] . ' ' . $digits[$counter] . $plural . ' ' . $hundred : $words[floor($tot_amt / 10) * 10] . ' ' . $words[$tot_amt % 10] . ' ' . $digits[$counter] . $plural . ' ' . $hundred;
+                } else
+                    $str[] = null;
+            }
+            $Rupees = implode('', array_reverse($str));
+            $paise = ($decimal) ? "and " . ($words[floor($decimal / 10) * 10] . " " . $words[$decimal % 10]) . ' Paise' : '';
+            $return = ($Rupees ? $Rupees : '');
+            $return .= ($paise ? $paise : "") . " Only";
+            echo 'Amount Chargeable (in words) : ' ;
+            echo "<b>" . ucwords($return) . "</b>";
+          
             ?>
         </div>
         <!--        <div id="notices">

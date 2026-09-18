@@ -30,9 +30,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	['cache_on'] TRUE/FALSE - Enables/disables query caching
 |	['cachedir'] The path to the folder where cache files should be stored
 |	['char_set'] The character set used in communicating with the database
-|				 (e.g. 'utf8' or 'utf8mb4' for MySQL 8; utf8mb4 recommended for full Unicode)
 |	['dbcollat'] The character collation used in communicating with the database
-|				 (e.g. 'utf8_general_ci' or 'utf8mb4_unicode_ci' for MySQL 8)
 |				 NOTE: For MySQL and MySQLi databases, this setting is only used
 | 				 as a backup if your server is running PHP < 5.2.3 or MySQL < 5.0.7
 |				 (and in table creation queries made with DB Forge).
@@ -67,9 +65,9 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'password',
-	'database' => 'softloom_new',
+	'username' => 'softloom_officeusr02',//softloom
+	'password' => 'SLt7243uj4YN',//Brahma@gil123
+	'database' => 'softloom_office02',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

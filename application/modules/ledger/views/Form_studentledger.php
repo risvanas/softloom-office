@@ -1,6 +1,6 @@
 <?php
-$ci =& get_instance();
-$ci->load->database();
+$con=mysql_connect('sdb-71.hosting.stackcp.net','root','');
+mysql_select_db('softloom_account',$con);
 ?>
  <div class="row">
         <div class="col-md-12" style="padding: 15px">
@@ -30,9 +30,10 @@ $ci->load->database();
                                 <?php $sn_count = 1; foreach($stud_list->result()  as $row)
                                     {
 					                   $sid=$row->STUDENT_ID;
-									  $sq = $ci->db->query("SELECT SUM(AMOUNT) AS amt FROM tbl_payment WHERE STUDENT_ID = ?", array($sid));
-									  $rs = $sq->row_array();
-									  $paid_amt = $rs ? (float) $rs['amt'] : 0;
+									  $selt="select sum(AMOUNT) as amt from tbl_payment where STUDENT_ID='$sid'";
+									  $sq=mysql_query($selt);
+									  $rs=mysql_fetch_array($sq);
+									  $paid_amt=$rs['amt'];
 									  $tot_fee_amt=$row->FEE_AMOUNT;
 									 $balance_amount=$tot_fee_amt-$paid_amt;
                                ?>
@@ -77,22 +78,26 @@ $ci->load->database();
                                                  </thead>
                                              <tbody>
                                                 <?php
-                                               $query = $ci->db->query("SELECT * FROM tbl_student WHERE STUDENT_ID = ?", array($id));
-												$r = $query->row_array() ?: array();
+                                               $sel1="select * from tbl_student where STUDENT_ID='$id'";
+												$query=mysql_query($sel1);
+												$r=mysql_fetch_array($query);
+												
+												
 													?>
                                                  <tr>
 												<td></td>
                                                   <td></td>
                                                   <td> Course Fee </td>
                                                   <td></td>
-                                                  <td><?php	$balance = isset($r['FEE_AMOUNT']) ? $r['FEE_AMOUNT'] : 0; echo $balance; ?> </td> 
+                                                  <td><?php	echo $balance= $r['FEE_AMOUNT']; ?> </td> 
                                                   <td></td>
                                                   </tr>
                                               
                                                 <?php
 												$i=0;
-											 $sql = $ci->db->query("SELECT tbl_payment.DATE, tbl_payment.PAY_NUMBER, tbl_payment.AMOUNT, tbl_student.FEE_AMOUNT FROM tbl_payment INNER JOIN tbl_student ON tbl_student.STUDENT_ID = tbl_payment.STUDENT_ID WHERE tbl_student.STUDENT_ID = ?", array($id));
-												foreach ($sql->result_array() as $res)
+											 $sel="select tbl_payment.DATE,tbl_payment.PAY_NUMBER,tbl_payment.AMOUNT,tbl_student.FEE_AMOUNT from tbl_payment INNER JOIN tbl_student ON  tbl_student.STUDENT_ID=tbl_payment.STUDENT_ID where tbl_student.STUDENT_ID='$id'";
+												$sql=mysql_query($sel);
+												while($res=mysql_fetch_array($sql))
 												{
 													$i++;
 													?>

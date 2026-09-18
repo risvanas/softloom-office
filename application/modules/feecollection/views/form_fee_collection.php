@@ -1,8 +1,8 @@
-﻿<div class="row">
+<div class="row">
     <div class="col-md-12">
         <!-- start: PAYMENT VOUCHER PANEL -->
         <form id="form" method="post" action="<?php echo site_url('feecollection') ?>" onsubmit="ins_data();">
-            <div class="panel panel-default m-t-2">
+            <div class="panel panel-default" style="margin-top:17px">
                 <div class="panel-heading"> <i class="icon-external-link-sign"></i>&nbspFee Collection
                     <div class="panel-tools"> <a class="btn btn-xs btn-link panel-collapse collapses" href="#"></a><a class="btn btn-xs btn-link panel-expand"
 

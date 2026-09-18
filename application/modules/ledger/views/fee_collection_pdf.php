@@ -61,11 +61,16 @@
                 font-weight: normal;
                 margin: 0 0 10px 0;
             }
+            /*            #content table.main{
+                            border: 1px solid #AAAAAA;
+                            height: 610px;
+                        }*/
             #content table.main tr th {
                 border: 1px solid #AAAAAA;
             }
             #content table.main tbody tr td, #content table.main tr th {
                 padding: 3px 20px !important;
+                /*background-color: #EEEEEE;*/
                 text-align: center;
             }
             #content table.main tr td, #content table.main tr th {
@@ -74,13 +79,27 @@
             #content table.main tr td:first-child {
                 border-left: 1px solid #AAAAAA !important;
             }
+            #content table.main .no {
+                /*color: #555555;*/
+                /*background-color: #DDDDDD;*/
+            }
             #content table.main .desc {
                 text-align: left;
+            }
+            #content table.main .unit {
+                /*background-color: #DDDDDD;*/
+            }
+            #content table.main .total {
+                /*color: #555555;*/
+            }
+            #content table.main td h3 {
+                margin: 0;
             }
             #content table.main tfoot td {
                 padding: 3px 20px !important;
                 background-color: #FFFFFF;
                 text-align: right;
+                /*                border-right: 1px solid #AAAAAA !important;*/
             }
             #content table.main tbody td.total,#content table.main tbody td.no, #content table.main tbody td.desc {
                 vertical-align: top;
@@ -88,6 +107,17 @@
             #content table.main td.total {
                 text-align: right;
             }
+            /*            #notices {
+                            padding-left: 6px;
+                            margin-bottom: 10px;
+                            border-left: 6px solid #555555;
+                            position: absolute;
+                            bottom: -10px;
+                            top: 96%;
+                            left: 0px;
+                            right: 0;
+                            height:100px; 
+                        }*/
             .page{
                 text-align: right;
             }
@@ -96,6 +126,7 @@
             }
             h2.name {
                 font-size: 13px; 
+                /*                font-weight: normal;*/
                 margin: 0;
                 text-transform: uppercase;
             }
@@ -115,11 +146,15 @@
             table {
                 border-spacing: 0px;
             }
+            /*            span.rupee {
+              content: "\20B9";
+            }*/
         </style>
     </head>
     <body>
         <?php
         foreach ($fee_details->result() as $row) {
+//            $invoice_id = $row->INVOICE_ID;
             $std_id = $row->STUDENT_ID;
             $course_name = $row->course_name;
             $FEE_AMOUNT = $row->FEE_AMOUNT;
@@ -143,7 +178,21 @@
             $round_off = $row->ROUND_OFF;
             $invoice_type = $row->INVOICE_TYPE;
         }
+
+//            $total_price = $row->TOTAL_PRICE;
+//            $paid_price = $row->PAID_PRICE;
+//            $due_amt = $total_price - $paid_price;
+//            $subtotal = $row->SUB_TOTAL_PRICE;
+//            $sgst_percent = $row->SGST_PERCENT;
+//            $cgst_percent = $row->CGST_PERCENT;
+//            $sgst_amt = $row->SGST_AMOUNT;
+//            $cgst_amt = $row->CGST_AMOUNT;
+//            $round_off = $row->ROUND_OFF;
+//            $invoice_type = $row->INVOICE_TYPE;
         ?>
+        <!-- <div class="ui button aligned center teal" id="create_pdf" >Download</div> -->
+        <!--<label id="create_pdf" style="position:absolute;  bottom: 98%;right: -20%;">Download</label>-->
+        <!--<form class="ui form" id="myform">-->
         <div id="header">
             <table class="table">
                 <tr>
@@ -152,6 +201,7 @@
                     $data = file_get_contents(base_url() . $company_details->LOGO);
                     $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
                   ?>
+                    ?>
                     <td class="bottom"><img id='logo_image' src='<?php echo $base64 ?>' alt='<?php echo $company_details->COMP_NAME ?>'></td>
                     <td class="address">
                         <p>
@@ -235,6 +285,7 @@
                 <table class="table">
                     <tr>
                         <td id="client">
+                            <!--<div class="to">INVOICE TO:</div>-->
                             <h2 class="name"><?php echo $customer_name; ?></h2>
                             <div class="address"><?php echo $address_one; ?></div>
                             <div class="address"><?php echo $address_two; ?></div>
@@ -244,6 +295,8 @@
                         <td id="invoice">
                             <h1><?php echo $BOOK_NAME . $BOOK_NUMBER ?></h1>
                             <div class="date">Date: <?php echo date('d-M-Y', strtotime($DATE_OF_TRANSACTION)); ?></div>
+                            <!--<div class="date">Amount Due: <?php // echo $due_amt;   ?></div>-->
+
                         </td>
                     </tr>
                 </table>
@@ -267,6 +320,8 @@
                         <tr>
                             <th class="no" style="border: 1px solid #AAAAAA; width: 8%; padding: 0px !important; margin: 0px">SL NO</th>
                             <th class="desc" style="border: 1px solid #AAAAAA; width: 70%">DESCRIPTION</th>
+<!--                                <th class="unit">UNIT PRICE</th>
+                            <th class="qty">QUANTITY</th>-->
                             <th class="total" style="border: 1px solid #AAAAAA">AMOUNT</th>
                         </tr>
                     </thead>

@@ -30,7 +30,7 @@ class Account extends MX_Controller {
             $acc_group = $this->input->post('txt_acc_group');
             $status = $this->input->post('drp_status');
             $acc_type = $this->input->post('drp_acc_type');
-            $opng_balance = (float) ($this->input->post('txt_opng_balance') ?: 0);
+            $opng_balance = $this->input->post('txt_opng_balance');
             $sess_array = $this->session->userdata('logged_in');
             $create_by = $sess_array['user_id'];
             $this->load->library('../controllers/lockdate');
@@ -45,7 +45,7 @@ class Account extends MX_Controller {
                 'STATUS' => $status,
                 'ACC_TYPE' => $acc_type,
                 'TYPE' => 'M',
-                'OPENING_BALANCE' => $opng_balance ,
+                'OPENING_BALANCE' => $opng_balance,
                 'CREATED_BY' => $create_by,
                 'CREATED_ON' => $create_on,
                 'LOCATION_DETAILS' => $location_details
@@ -358,7 +358,7 @@ class Account extends MX_Controller {
         $acc_group = $this->input->post('txt_acc_group');
         $status = $this->input->post('drp_status');
         $acc_type = $this->input->post('drp_acc_type');
-        $opng_balance = (float) ($this->input->post('txt_opng_balance') ?: 0);
+        $opng_balance = $this->input->post('txt_opng_balance');
         $sess_array = $this->session->userdata('logged_in');
         $modified_by = $sess_array['user_id'];
         $this->load->library('../controllers/lockdate');
